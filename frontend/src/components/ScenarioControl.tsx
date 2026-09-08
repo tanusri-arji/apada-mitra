@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScenarioType } from '../types';
-import { CloudRain, Zap, Sun, X, Check } from 'lucide-react';
+import { CloudRain, Zap, Sun, X, Check, Loader2 } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -45,7 +45,21 @@ export const ScenarioControl: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4 font-sans">
-      <div className="bg-[#14181D] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden font-mono">
+      <div className="bg-[#14181D] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden font-mono relative">
+
+        {/* Loading overlay — shown while backend processes the scenario change */}
+        {loading && (
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-10 flex flex-col items-center justify-center gap-3 rounded-2xl">
+            <Loader2 className="w-8 h-8 text-[#FF7A18] animate-spin" />
+            <p className="text-sm font-black text-white uppercase tracking-wider">
+              Recalculating Risk Engine…
+            </p>
+            <p className="text-xs text-gray-400 font-sans">
+              Updating all 15 villages — this may take a moment
+            </p>
+          </div>
+        )}
+
         <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#0E1115]">
           <div className="flex items-center gap-2.5">
             <CloudRain className="w-5 h-5 text-[#FF7A18]" />
@@ -55,7 +69,12 @@ export const ScenarioControl: React.FC<Props> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            disabled={loading}
+            className={`p-1 rounded-lg transition cursor-pointer ${
+              loading
+                ? 'text-gray-600 cursor-not-allowed'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
           >
             <X className="w-5 h-5" />
           </button>
@@ -75,10 +94,11 @@ export const ScenarioControl: React.FC<Props> = ({
                 key={s.type}
                 disabled={loading}
                 onClick={() => {
-                  onSelectScenario(s.type);
-                  onClose();
+                  if (!loading) onSelectScenario(s.type);
                 }}
-                className={`w-full text-left p-4 rounded-xl border transition flex items-start gap-4 cursor-pointer ${
+                className={`w-full text-left p-4 rounded-xl border transition flex items-start gap-4 ${
+                  loading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+                } ${
                   isSelected
                     ? 'border-[#FF7A18] bg-[#FF7A18]/15 shadow-xl ring-1 ring-[#FF7A18]/40'
                     : 'border-white/10 hover:border-white/20 bg-[#0E1115]/60'

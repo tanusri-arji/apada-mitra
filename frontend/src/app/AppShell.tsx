@@ -128,7 +128,7 @@ export const AppShell: React.FC = () => {
       <ScenarioControl
         isOpen={isScenarioModalOpen}
         onClose={() => setIsScenarioModalOpen(false)}
-        currentScenario={scenarioState?.scenario || 'HEAVY_RAIN'}
+        currentScenario={scenarioState?.scenario || 'NORMAL'}
         onSelectScenario={handleSelectScenario}
         loading={scenarioUpdating}
       />

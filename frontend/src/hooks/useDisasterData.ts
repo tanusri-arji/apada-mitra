@@ -162,6 +162,8 @@ export function useDisasterData() {
       setActiveSimulation(null);
       await updateScenario(newScenario);
       await loadData();
+      // Auto-close the modal now that the scenario has been applied and data refreshed
+      setIsScenarioModalOpen(false);
       if (selectedVillageId) {
         fetchShelterRecommendation(selectedVillageId)
           .then(setShelterRec)
