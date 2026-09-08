@@ -1,0 +1,1 @@
+export { useDisasterData } from './useDisasterData';

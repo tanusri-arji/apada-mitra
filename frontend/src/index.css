@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #08090B;
+    color: #FFFFFF;
+    /* Subtle radial orange and yellow ambient glows behind key areas */
+    background-image: 
+      radial-gradient(ellipse at 85% 10%, rgba(255, 122, 24, 0.045) 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 90%, rgba(255, 183, 3, 0.035) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(20, 24, 29, 0.5) 0%, transparent 100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background-color: rgba(255, 122, 24, 0.35);
+    color: #FFFFFF;
+  }
+}
+
+/* Glassmorphic Bento Card Utility Classes */
+.bento-card {
+  background: rgba(20, 24, 29, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.bento-card-interactive {
+  background: rgba(20, 24, 29, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card-interactive:hover {
+  background: rgba(24, 29, 34, 0.88);
+  border-color: rgba(255, 122, 24, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.8), 0 0 20px 0 rgba(255, 122, 24, 0.08);
+}
+
+.bento-glow-orange {
+  box-shadow: 0 0 35px -5px rgba(255, 122, 24, 0.18), inset 0 1px 0 0 rgba(255, 183, 3, 0.2);
+  border-color: rgba(255, 122, 24, 0.35) !important;
+}
+
+.bento-glow-emerald {
+  box-shadow: 0 0 30px -5px rgba(16, 185, 129, 0.18), inset 0 1px 0 0 rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Custom Leaflet Operations Center GIS Styling */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #0B0D10 !important;
+  font-family: 'Inter', sans-serif;
+  border-radius: 16px;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: #14181D !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 122, 24, 0.08) !important;
+  backdrop-filter: blur(16px);
+}
+
+.leaflet-popup-tip {
+  background-color: #14181D !important;
+}
+
+.dark-leaflet-tooltip {
+  background-color: #181D22 !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.7) !important;
+  padding: 6px 10px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+.dark-leaflet-tooltip:before {
+  border-top-color: #181D22 !important;
+}
+
+/* Custom Pulsing Keyframes for Critical Danger Markers */
+@keyframes pulse-critical {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-pulse-critical {
+  animation: pulse-critical 1.6s infinite ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.03);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+/* Custom Animated Dash Flow for Safest Evacuation Route */
+@keyframes route-dash-flow {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-route-flow {
+  stroke-dasharray: 8 6;
+  animation: route-dash-flow 1.2s linear infinite;
+}
+
+/* Custom Tactical GIS Leaflet Marker Overrides */
+.custom-leaflet-marker, .custom-shelter-marker, .custom-village-icon, .custom-shelter-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Custom Scrollbars (Deep Charcoal Track, Dark Slate Glass Thumb) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0D10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222930;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF7A18;
+}
+
+/* Leaflet Attribution Styling */
+.leaflet-control-attribution {
+  background: rgba(14, 17, 21, 0.85) !important;
+  color: #9CA3AF !important;
+  font-size: 9px !important;
+  border-radius: 6px !important;
+  padding: 2px 6px !important;
+  backdrop-filter: blur(8px) !important;
+  margin: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+.leaflet-control-attribution a {
+  color: #FFB703 !important;
+  text-decoration: none !important;
+}
+
+.leaflet-control-attribution a:hover {
+  text-decoration: underline !important;
+}

@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+backend/venv/
+venv/
+.venv/
+env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build outputs
+frontend/dist/
+dist/
+build/
+
+# Environment variables & secrets (CRITICAL: Do NOT leak bot tokens)
+.env
+backend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Scratch & Temporary files
+scratch/
+chrome_dom.html
+scratch_*.py
