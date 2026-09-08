@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://apada-mitra.onrender.com/api/:path*"
+    }
+  ]
+}
