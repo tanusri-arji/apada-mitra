@@ -337,11 +337,11 @@ for _village in DEMO_VILLAGES:
 # Scenario-dependent hydro-meteorological inputs
 SCENARIO_INPUT_MULTIPLIERS: Dict[ScenarioType, Dict[str, Any]] = {
     ScenarioType.NORMAL: {
-        "description": "Baseline clear to light seasonal drizzle. Minimal flood threat.",
-        "rainfall_range": (2.0, 12.0),       # current mm/h
-        "forecast_24h_range": (10.0, 35.0), # forecast mm
-        "soil_saturation_range": (25.0, 45.0), # %
-        "river_level_range": (1.0, 1.2),      # stage multiplier
+        "description": "Baseline clear weather. Minimal flood threat.",
+        "rainfall_range": (0.0, 0.0),       # current mm/h
+        "forecast_24h_range": (0.0, 2.0),   # forecast mm
+        "soil_saturation_range": (20.0, 35.0), # %
+        "river_level_range": (0.0, 0.0),      # stage multiplier
         "quality": DataQualityStatus.OK,
     },
     ScenarioType.HEAVY_RAIN: {

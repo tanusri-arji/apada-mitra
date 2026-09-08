@@ -113,14 +113,14 @@ export function useDisasterData() {
     }
   }, []);
 
- useEffect(() => {
-  loadData();
-  const intervalId = setInterval(() => {
+  useEffect(() => {
     loadData();
-  }, 30000);
+    const intervalId = setInterval(() => {
+      loadData();
+    }, 60000);
 
-  return () => clearInterval(intervalId);
-}, [loadData]);
+    return () => clearInterval(intervalId);
+  }, [loadData]);
 
    // Sync selected village details
   useEffect(() => {
