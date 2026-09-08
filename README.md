@@ -121,3 +121,75 @@ APADA MITRA integrates real-world data adapters alongside transparent fallback s
 - **Relief Shelters**: APADA MITRA maintains a geographically distributed 33 shelter candidate network sourced from publicly documented government facilities (USDMA/DDMP Chamoli, Rudraprayag, HPSDMA Mandi, and KSDMA Wayanad). Verification levels (`REAL_STATIC_GOVERNMENT`, `DERIVED_FROM_REAL_SOURCE`) and capacity availability are explicitly represented. The system does not fabricate shelter capacity or official designation. External live shelter occupancy/capacity feeds are not connected unless an official source is actually available.
 - **Emergency Alerts**: Local decision-support dispatch simulation; no external SMS is transmitted to public carrier networks.
 - **Offline / Demo Fallback**: When external services are unreachable, deterministic scenario datasets are utilized with explicit `CACHED` or `OFFLINE_DEMO` data-state labeling.
+
+
+
+
+
+
++---------------------------------------------------------------------------------------------------+
+|                                  USER & EXTERNAL INTEGRATIONS                                     |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|   +--------------------------+       +---------------------------+       +--------------------+   |
+|   | GIS Command Dashboard    |       | Disaster Response Officers|       | External Services  |   |
+|   | (React 18 + Vite Web App)|       | (Telegram Client / App)   |       | (Open-Meteo API,   |   |
+|   | Hosted on Vercel CDN     |       |                           |       |  OpenStreetMap)    |   |
+|   +------------+-------------+       +-------------+-------------+       +---------+----------+   |
+|                |                                   ^                               |              |
+|                | HTTPS / REST                      | Alert Dispatch                | REST / JSON  |
+|                v                                   |                               v              |
++----------------------------------------------------+----------------------------------------------+
+|                                    BACKEND SERVICES ENGINE                                        |
+|                                    (Python FastAPI on Render)                                     |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|   +-------------------------------------------------------------------------------------------+   |
+|   |                                     API REST GATEWAY                                      |   |
+|   |   - /api/health & /api/readiness (Diagnostics)   - /api/evacuation/route (Routing)        |   |
+|   |   - /api/scenario & /api/villages (Data Feeds)   - /api/simulation/what-if (Cascade Engine)|   |
+|   +--------------------------------------------+----------------------------------------------+   |
+|                                                |                                                  |
+|       +----------------------------------------+----------------------------------------+         |
+|       |                                        |                                        |         |
+|       v                                        v                                        v         |
+|   +---------------------------+    +---------------------------+    +---------------------------+ |
+|   |  HYDRO-MET RISK ENGINE    |    |  HAZARD-AWARE ROUTER      |    |  SHELTER ALLOCATOR        | |
+|   |                           |    |                           |    |                           | |
+|   | - Multi-factor 0-100 score|    | - Dynamic Dijkstra Graph  |    | - Capacity constraintcheck| |
+|   | - Terrain & DEM elevation |    | - Road hazard status      |    | - Dynamic passability     | |
+|   | - Explainable AI (XAI)    |    | - Penalty calculation     |    | - Nearest safe shelter    | |
+|   +-------------+-------------+    +-------------+-------------+    +-------------+-------------+ |
+|                 |                                |                                |               |
+|                 +-----------------------+--------+--------------------------------+               |
+|                                         |                                                         |
+|                                         v                                                         |
+|   +-------------------------------------------------------------------------------------------+   |
+|   |                            WHAT-IF CASCADE SIMULATION ENGINE                              |   |
+|   |   - Hydro-meteorological sliders   - 9-stage cascade chain   - Delta comparison           |   |
+|   +---------------------------------------------+---------------------------------------------+   |
+|                                                 |                                                 |
+|                                                 v                                                 |
+|   +-------------------------------------------------------------------------------------------+   |
+|   |                               DISPATCH & ALERT CONTROLLER                                 |   |
+|   |   - Multilingual generator (EN, HI, Garhwali, Kumaoni, Nepali)                            |   |
+|   |   - Live Telegram Emergency Bot integration                                               |   |
+|   +---------------------------------------------+---------------------------------------------+   |
+|                                                 |                                                 |
++-------------------------------------------------+-------------------------------------------------+
+|                                    DATA & PERSISTENCE ADAPTERS                                    |
++---------------------------------------------------------------------------------------------------+
+|                                                                                                   |
+|   +-----------------------+   +-----------------------+   +-----------------------------------+   |
+|   | Open-Meteo REST       |   | Static GIS Datasets   |   | Verified Shelter Network          |   |
+|   | Rainfall & Soil       |   | Copernicus 30m DEM &  |   | 33/63 Candidate Network (USDMA,   |   |
+|   | Saturation Models     |   | GSI Landslide Catalog |   | HPSDMA, KSDMA Government Sources) |   |
+|   +-----------+-----------+   +-----------+-----------+   +-----------------+-----------------+   |
+|               |                           |                                 |                     |
+|               v                           v                                 v                     |
+|   +-------------------------------------------------------------------------------------------+   |
+|   |                          DETERMINISTIC FALLBACK & DEMO STATE                              |   |
+|   |   - Synthetic Watershed Dataset (15 Villages)   - Offline Cached Scenarios                |   |
+|   +-------------------------------------------------------------------------------------------+   |
+|                                                                                                   |
++---------------------------------------------------------------------------------------------------+
