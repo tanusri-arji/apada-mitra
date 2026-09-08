@@ -119,9 +119,9 @@ export const Response: React.FC<Props> = ({
   const shelterSuitability = rawSuit != null ? Math.round(rawSuit > 1 ? rawSuit : rawSuit * 100) : null;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-hidden font-sans p-3 lg:p-4 space-y-3">
+    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-4 space-y-3">
       {/* 1. TOP OPERATIONAL STATUS STRIP */}
-      <div className="bento-card px-4 py-2.5 flex items-center justify-between text-xs font-mono flex-shrink-0 shadow-lg">
+      <div className="bento-card px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono flex-shrink-0 shadow-lg">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Navigation className="w-4 h-4 text-[#FF7A18]" />
@@ -137,11 +137,11 @@ export const Response: React.FC<Props> = ({
         </div>
 
         {/* Action Trigger & Station Selector */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <select
             value={selectedVillageId || 'VIL-001'}
             onChange={(e) => onSelectVillage(e.target.value)}
-            className="bg-[#0E1115] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#FF7A18] cursor-pointer"
+            className="bg-[#0E1115] border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#FF7A18] cursor-pointer"
           >
             {villages.map((v) => (
               <option key={v.village_id} value={v.village_id}>
@@ -153,7 +153,7 @@ export const Response: React.FC<Props> = ({
           {/* GENERATE ALERT BUTTON (ORANGE -> YELLOW GRADIENT) */}
           <button
             onClick={onOpenSmsModal}
-            className="bg-gradient-to-r from-[#FF7A18] to-[#FFB703] hover:from-[#FF7A18]/90 hover:to-[#FFB703]/90 text-black font-black px-3.5 py-1.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-orange-500/20 text-xs font-mono animate-pulse cursor-pointer"
+            className="bg-gradient-to-r from-[#FF7A18] to-[#FFB703] hover:from-[#FF7A18]/90 hover:to-[#FFB703]/90 text-black font-black px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-orange-500/20 text-xs font-mono animate-pulse cursor-pointer"
           >
             <Radio className="w-4 h-4" />
             <span>GENERATE ALERT</span>
@@ -162,9 +162,9 @@ export const Response: React.FC<Props> = ({
       </div>
 
       {/* 2. MAIN BENTO GRID: 60% EVACUATION MAP + 40% ACTION STACK */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
         {/* LARGE EVACUATION MAP BENTO (APPROX 60% / 7 COLUMNS) */}
-        <div className="lg:col-span-7 bento-card p-2 flex flex-col h-full overflow-hidden relative shadow-2xl">
+        <div className="lg:col-span-7 bento-card p-2 flex flex-col h-[380px] lg:h-full min-h-[340px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <Compass className="w-3.5 h-3.5 text-[#FF7A18]" />
@@ -192,7 +192,7 @@ export const Response: React.FC<Props> = ({
         </div>
 
         {/* RIGHT SIDE BENTO ACTION & SHELTER STACK (5 COLUMNS) */}
-        <div className="lg:col-span-5 h-full overflow-y-auto space-y-3 pr-1">
+        <div className="lg:col-span-5 h-full min-h-[400px] lg:min-h-0 overflow-visible lg:overflow-y-auto space-y-3 pr-1">
           {/* Bento Card 1: Target Node Summary */}
           <div className="bento-card p-4 space-y-3 shadow-lg">
             <div className="flex items-start justify-between border-b border-white/10 pb-2.5">

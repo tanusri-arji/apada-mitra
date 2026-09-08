@@ -69,7 +69,7 @@ export const LiveMonitoring: React.FC<Props> = ({
   );
 
   return (
-    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto lg:overflow-hidden relative font-sans p-2.5 lg:p-3.5 space-y-2.5 lg:space-y-3">
+    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden relative font-sans p-2.5 lg:p-3.5 space-y-2.5 lg:space-y-3">
       {/* 1. TOP BENTO ROW: 6 COMPACT SENSOR METRICS CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 flex-shrink-0">
         {/* CURRENT RAINFALL */}
@@ -169,9 +169,9 @@ export const LiveMonitoring: React.FC<Props> = ({
       </div>
 
       {/* 2. MAIN BENTO GRID: DOMINANT GIS MAP + SIDE TELEMETRY STACK */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
         {/* DOMINANT GIS MAP BENTO CARD (8 COLUMNS ON LARGE SCREEN) */}
-        <div className="lg:col-span-8 bento-card p-2 flex flex-col h-full overflow-hidden relative shadow-2xl">
+        <div className="lg:col-span-8 bento-card p-2 flex flex-col h-[380px] lg:h-full min-h-[340px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -200,7 +200,7 @@ export const LiveMonitoring: React.FC<Props> = ({
         </div>
 
         {/* RIGHT BENTO STACK (4 COLUMNS ON LARGE SCREEN) */}
-        <div className="lg:col-span-4 flex flex-col gap-3 h-full overflow-hidden min-h-0">
+        <div className="lg:col-span-4 flex flex-col gap-3 h-full min-h-[380px] lg:min-h-0 overflow-visible lg:overflow-hidden">
           {/* Bento Card 1: Selected Station Telemetry Card */}
           <div className="bento-card p-4 space-y-3 flex-shrink-0">
             <div className="flex items-start justify-between border-b border-white/10 pb-2.5">

@@ -127,9 +127,9 @@ export const Validation: React.FC<Props> = ({
   const activeCaseStudyDetails = CASE_STUDY_DETAILS[activeEvent.id];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-hidden font-sans p-3 lg:p-4 space-y-3">
+    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-4 space-y-3">
       {/* 1. TOP VALIDATION RIBBON */}
-      <div className="bento-card px-4 py-2.5 flex items-center justify-between text-xs font-mono flex-shrink-0 shadow-lg">
+      <div className="bento-card px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono flex-shrink-0 shadow-lg">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <FileCheck className="w-4 h-4 text-[#FF7A18]" />
@@ -153,9 +153,9 @@ export const Validation: React.FC<Props> = ({
       </div>
 
       {/* 2. MAIN BENTO GRID: LEFT MAP + RIGHT REPLAY WORKSPACE */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
         {/* LEFT HISTORICAL CATCHMENT MAP BENTO (5 COLS) */}
-        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-full overflow-hidden relative shadow-2xl">
+        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-[380px] lg:h-full min-h-[340px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <MapPin className="w-3.5 h-3.5 text-[#FF7A18]" />
@@ -198,7 +198,7 @@ export const Validation: React.FC<Props> = ({
         </div>
 
         {/* RIGHT VALIDATION REPLAY & METRICS WORKSPACE (7 COLS) */}
-        <div className="lg:col-span-7 h-full overflow-y-auto space-y-3 pr-1">
+        <div className="lg:col-span-7 h-full min-h-[400px] lg:min-h-0 overflow-visible lg:overflow-y-auto space-y-3 pr-1">
           {/* Bento Card 1: Transparent Scientific Honesty Notice */}
           <div className="bento-card p-4 space-y-2 border-amber-500/30 bg-[#14181D]">
             <div className="flex items-start gap-3">

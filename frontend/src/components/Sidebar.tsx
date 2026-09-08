@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Sparkles,
   LayoutDashboard,
+  X,
 } from 'lucide-react';
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
   selectedVillageId: string | null;
   onSelectVillage: (id: string) => void;
   loading: boolean;
+  onCloseMobile?: () => void;
 }
 
 export const Sidebar: React.FC<Props> = ({
@@ -30,6 +32,7 @@ export const Sidebar: React.FC<Props> = ({
   villages,
   selectedVillageId,
   onSelectVillage,
+  onCloseMobile,
 }) => {
   const [search, setSearch] = useState('');
   const [filterLevel, setFilterLevel] = useState<RiskLevel | 'ALL'>('ALL');
@@ -68,7 +71,7 @@ export const Sidebar: React.FC<Props> = ({
       id: 'VALIDATION_REPLAY',
       step: '04',
       label: 'VALIDATION',
-      subtitle: 'Historical Case Studies',
+      subtitle: 'Historical Case Studies & Replay',
       icon: FileCheck,
       badge: 'CASE STUDY',
     },
@@ -83,27 +86,39 @@ export const Sidebar: React.FC<Props> = ({
   const totalCount = villages.length;
 
   return (
-    <aside className="w-[260px] min-w-[250px] max-w-[270px] bg-[#0E1115]/95 backdrop-blur-xl border-r border-white/10 flex flex-col h-full z-40 font-sans shadow-2xl flex-shrink-0 select-none">
+    <aside className="w-full lg:w-[260px] lg:min-w-[250px] lg:max-w-[270px] bg-[#0E1115]/95 backdrop-blur-xl lg:border-r border-white/10 flex flex-col h-full z-40 font-sans shadow-2xl flex-shrink-0 select-none">
       {/* 1. App Brand & Identity Header */}
-      <div className="p-4 border-b border-white/10 bg-[#14181D]/60 flex items-center gap-3 flex-shrink-0">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF7A18] to-[#FFB703] p-0.5 flex items-center justify-center shadow-lg shadow-orange-500/20 flex-shrink-0">
-          <div className="w-full h-full bg-[#0E1115] rounded-[10px] flex items-center justify-center">
-            <Shield className="w-5 h-5 text-[#FFB703]" />
+      <div className="p-4 border-b border-white/10 bg-[#14181D]/60 flex items-center justify-between gap-3 flex-shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF7A18] to-[#FFB703] p-0.5 flex items-center justify-center shadow-lg shadow-orange-500/20 flex-shrink-0">
+            <div className="w-full h-full bg-[#0E1115] rounded-[10px] flex items-center justify-center">
+              <Shield className="w-5 h-5 text-[#FFB703]" />
+            </div>
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-sm font-black text-white tracking-wider uppercase font-mono truncate">
+                APADA MITRA
+              </h1>
+              <span className="bg-white/10 text-white/90 text-[9px] font-mono px-1 py-0.2 rounded font-extrabold">
+                v2.0
+              </span>
+            </div>
+            <p className="text-[10px] text-gray-400 font-mono tracking-wide uppercase truncate mt-0.5">
+              DISASTER INTELLIGENCE
+            </p>
           </div>
         </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <h1 className="text-sm font-black text-white tracking-wider uppercase font-mono truncate">
-              APADA MITRA
-            </h1>
-            <span className="bg-white/10 text-white/90 text-[9px] font-mono px-1 py-0.2 rounded font-extrabold">
-              v2.0
-            </span>
-          </div>
-          <p className="text-[10px] text-gray-400 font-mono tracking-wide uppercase truncate mt-0.5">
-            DISASTER INTELLIGENCE
-          </p>
-        </div>
+
+        {onCloseMobile && (
+          <button
+            onClick={onCloseMobile}
+            className="lg:hidden p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition cursor-pointer flex-shrink-0"
+            aria-label="Close navigation"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* 2. Top Nav Mode Switcher (Phases vs Monitored Stations) */}
@@ -147,7 +162,10 @@ export const Sidebar: React.FC<Props> = ({
             return (
               <button
                 key={item.id}
-                onClick={() => onTabChange(item.id)}
+                onClick={() => {
+                  onTabChange(item.id);
+                  if (onCloseMobile) onCloseMobile();
+                }}
                 className={`w-full text-left p-3 rounded-2xl transition-all duration-200 flex items-center justify-between group cursor-pointer relative ${
                   isActive
                     ? 'bg-gradient-to-r from-[#FF7A18] to-[#FFB703] text-black font-extrabold shadow-lg shadow-orange-500/25 scale-[1.02]'
@@ -267,7 +285,10 @@ export const Sidebar: React.FC<Props> = ({
               return (
                 <div
                   key={v.village_id}
-                  onClick={() => onSelectVillage(v.village_id)}
+                  onClick={() => {
+                    onSelectVillage(v.village_id);
+                    if (onCloseMobile) onCloseMobile();
+                  }}
                   className={`p-2.5 cursor-pointer transition-all flex items-center justify-between group ${
                     isSelected
                       ? 'bg-[#FF7A18]/15 border-l-4 border-l-[#FF7A18] text-white shadow-inner'

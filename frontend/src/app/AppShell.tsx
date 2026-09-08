@@ -40,8 +40,12 @@ export const AppShell: React.FC = () => {
     currentVillages,
   } = useDisasterData();
 
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
+
   return (
     <OperationalLayout
+      isMobileSidebarOpen={isMobileSidebarOpen}
+      onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
       sidebar={
         <Sidebar
           activeTab={activeTab}
@@ -51,6 +55,7 @@ export const AppShell: React.FC = () => {
           selectedVillageId={selectedVillageId}
           onSelectVillage={setSelectedVillageId}
           loading={loading}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
       }
       topBar={
@@ -64,6 +69,7 @@ export const AppShell: React.FC = () => {
           isSimulationActive={!!activeSimulation}
           villages={currentVillages}
           onSelectVillage={setSelectedVillageId}
+          onToggleMobileSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
         />
       }
       banner={

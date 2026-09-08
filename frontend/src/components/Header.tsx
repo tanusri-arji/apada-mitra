@@ -5,6 +5,7 @@ import {
   SlidersHorizontal,
   Maximize,
   Minimize,
+  Menu,
 } from 'lucide-react';
 import { ScenarioStateResponse, ReadinessResponse, TopLevelView, VillageRiskDetail } from '../types';
 
@@ -18,6 +19,7 @@ interface Props {
   isSimulationActive?: boolean;
   villages?: VillageRiskDetail[];
   onSelectVillage?: (id: string) => void;
+  onToggleMobileSidebar?: () => void;
 }
 
 export const Header: React.FC<Props> = ({
@@ -30,6 +32,7 @@ export const Header: React.FC<Props> = ({
   isSimulationActive = false,
   villages = [],
   onSelectVillage,
+  onToggleMobileSidebar,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -97,15 +100,26 @@ export const Header: React.FC<Props> = ({
   );
 
   return (
-    <header className="h-16 px-5 lg:px-6 bg-[#0E1115]/90 backdrop-blur-xl border-b border-white/10 flex items-center justify-between gap-4 z-30 font-sans flex-shrink-0 relative">
-      {/* 1. Left Page Title & Subtitle */}
-      <div className="flex-shrink-0 min-w-0">
-        <h1 className="text-base lg:text-lg font-black text-white tracking-wider uppercase font-mono leading-none">
-          {pageInfo.title}
-        </h1>
-        <p className="text-xs text-gray-400 font-sans tracking-normal mt-0.5 hidden sm:block truncate">
-          {pageInfo.subtitle}
-        </p>
+    <header className="h-16 px-3 lg:px-6 bg-[#0E1115]/90 backdrop-blur-xl border-b border-white/10 flex items-center justify-between gap-2 sm:gap-4 z-30 font-sans flex-shrink-0 relative">
+      {/* 1. Left Page Title, Subtitle & Mobile Menu Trigger */}
+      <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
+        {onToggleMobileSidebar && (
+          <button
+            onClick={onToggleMobileSidebar}
+            className="lg:hidden p-2 rounded-xl bg-[#14181D] hover:bg-[#1C2228] border border-white/10 text-gray-300 hover:text-[#FFB703] transition flex items-center justify-center cursor-pointer flex-shrink-0"
+            aria-label="Toggle navigation menu"
+          >
+            <Menu className="w-5 h-5 text-[#FFB703]" />
+          </button>
+        )}
+        <div className="flex-shrink-0 min-w-0">
+          <h1 className="text-sm sm:text-base lg:text-lg font-black text-white tracking-wider uppercase font-mono leading-none truncate">
+            {pageInfo.title}
+          </h1>
+          <p className="text-xs text-gray-400 font-sans tracking-normal mt-0.5 hidden sm:block truncate">
+            {pageInfo.subtitle}
+          </p>
+        </div>
       </div>
 
       {/* 2. Center Glassmorphic Search Bar */}
@@ -153,7 +167,7 @@ export const Header: React.FC<Props> = ({
       </div>
 
       {/* 3. Right Status Badges & Quick Action Controls */}
-      <div className="flex items-center gap-2.5 text-xs font-mono flex-shrink-0">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs font-mono flex-shrink-0">
         {isSimulationActive && (
           <div className="hidden lg:flex items-center gap-1.5 bg-red-500/15 border border-red-500/40 text-red-400 px-2.5 py-1.5 rounded-xl font-bold text-[11px] animate-pulse">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
@@ -162,7 +176,7 @@ export const Header: React.FC<Props> = ({
         )}
 
         {/* SYSTEM STATUS PILL (EMERALD) */}
-        <div className="hidden sm:flex items-center gap-2 bg-[#14181D] px-3 py-1.5 rounded-xl border border-white/10 text-[11px]">
+        <div className="hidden md:flex items-center gap-2 bg-[#14181D] px-3 py-1.5 rounded-xl border border-white/10 text-[11px]">
           <span className={`w-2 h-2 rounded-full ${readinessDotColor} shadow-sm shadow-emerald-500/50`}></span>
           <span className="text-gray-400">SYSTEM:</span>
           <span className={`font-black ${readinessTextColor}`}>
@@ -173,11 +187,11 @@ export const Header: React.FC<Props> = ({
         {/* SCENARIO SELECTOR BUTTON */}
         <button
           onClick={onScenarioChangeClick}
-          className="bg-gradient-to-r from-[#FF7A18]/20 to-[#FFB703]/20 hover:from-[#FF7A18]/30 hover:to-[#FFB703]/30 text-[#FFB703] border border-[#FF7A18]/40 hover:border-[#FF7A18]/70 font-extrabold text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-2 shadow-sm font-mono uppercase tracking-wider cursor-pointer"
+          className="bg-gradient-to-r from-[#FF7A18]/20 to-[#FFB703]/20 hover:from-[#FF7A18]/30 hover:to-[#FFB703]/30 text-[#FFB703] border border-[#FF7A18]/40 hover:border-[#FF7A18]/70 font-extrabold text-xs px-2.5 sm:px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 sm:gap-2 shadow-sm font-mono uppercase tracking-wider cursor-pointer"
         >
           <SlidersHorizontal className="w-3.5 h-3.5 text-[#FF7A18]" />
           <span className="hidden xl:inline text-[10px] text-gray-400">SCENARIO:</span>
-          <span className="text-white">
+          <span className="text-white text-[10px] sm:text-xs">
             {scenarioState?.scenario || 'HEAVY_RAIN'}
           </span>
         </button>
@@ -185,7 +199,7 @@ export const Header: React.FC<Props> = ({
         {/* RESET BUTTON */}
         <button
           onClick={onDemoReset}
-          className="px-2.5 py-1.5 bg-[#14181D] hover:bg-[#1C2228] border border-white/10 hover:border-[#FF7A18]/50 text-gray-400 hover:text-white rounded-xl text-xs font-bold font-mono transition flex items-center gap-1.5 cursor-pointer"
+          className="p-1.5 sm:px-2.5 sm:py-1.5 bg-[#14181D] hover:bg-[#1C2228] border border-white/10 hover:border-[#FF7A18]/50 text-gray-400 hover:text-white rounded-xl text-xs font-bold font-mono transition flex items-center gap-1.5 cursor-pointer"
           title="Reset application to initial state"
         >
           <RotateCcw className="w-3.5 h-3.5 text-gray-400" />
@@ -195,7 +209,7 @@ export const Header: React.FC<Props> = ({
         {/* FULLSCREEN COMMAND CENTER TOGGLE BUTTON */}
         <button
           onClick={toggleFullscreen}
-          className="px-2.5 py-1.5 bg-[#14181D] hover:bg-[#1C2228] border border-white/10 hover:border-[#FF7A18]/50 text-gray-300 hover:text-white rounded-xl text-xs font-bold font-mono transition flex items-center gap-1.5 cursor-pointer"
+          className="p-1.5 sm:px-2.5 sm:py-1.5 bg-[#14181D] hover:bg-[#1C2228] border border-white/10 hover:border-[#FF7A18]/50 text-gray-300 hover:text-white rounded-xl text-xs font-bold font-mono transition flex items-center gap-1.5 cursor-pointer"
           title={isFullscreen ? "Exit Fullscreen (F11 / Esc)" : "Enter Fullscreen Command Center (F11)"}
         >
           {isFullscreen ? (

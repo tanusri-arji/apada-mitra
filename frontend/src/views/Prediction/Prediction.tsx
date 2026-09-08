@@ -93,7 +93,7 @@ export const Prediction: React.FC<Props> = ({
   const strokeDashoffset = circumference - (overallRiskScore / 100) * circumference;
 
   return (
-    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto lg:overflow-hidden font-sans p-2.5 lg:p-3.5 space-y-2.5 lg:space-y-3">
+    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-3.5 space-y-2.5 lg:space-y-3">
       {/* 1. TOP BENTO ROW: GLOWING SCORE + DUAL RISK + CONTROLS */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 lg:gap-3 flex-shrink-0">
         {/* GLOWING PRIMARY OVERALL RISK SCORE CARD (4 COLS) */}
