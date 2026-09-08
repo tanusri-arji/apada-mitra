@@ -156,12 +156,37 @@ export function useDisasterData() {
     }
   };
 
+  const loadScenarioData = useCallback(async () => {
+    // Lightweight refresh — only re-fetch what actually changes with scenario.
+    // Roads and shelters are static; skipping them halves API call count.
+    try {
+      setLoading(true);
+      setBackendError(null);
+      fetchScenarioState().then((sc) => sc && setScenarioState(sc)).catch(() => {});
+      fetchReadiness().then((read) => read && setReadinessState(read)).catch(() => {});
+
+      const [risk, ls, prio] = await Promise.all([
+        fetchRiskOverview().catch(() => null),
+        fetchLandslideOverview().catch(() => []),
+        fetchEvacuationPriorities().catch(() => []),
+      ]);
+
+      if (risk) setRiskOverview(risk);
+      if (ls) setLandslides(ls);
+      if (prio) setPriorities(prio);
+    } catch (err: any) {
+      console.error('Scenario reload error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const handleSelectScenario = async (newScenario: ScenarioType) => {
     try {
       setScenarioUpdating(true);
       setActiveSimulation(null);
       await updateScenario(newScenario);
-      await loadData();
+      await loadScenarioData();
       // Auto-close the modal now that the scenario has been applied and data refreshed
       setIsScenarioModalOpen(false);
       if (selectedVillageId) {

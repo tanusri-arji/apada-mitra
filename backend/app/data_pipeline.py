@@ -137,14 +137,21 @@ class DataIngestionPipeline:
 
         base_obs = None
 
-               # 1. Live API fetch first. A successful live response must always beat
-        # an older cached observation; cache is a fallback, not a substitute for live data.
+        # For non-NORMAL scenarios (HEAVY_RAIN, EXTREME_RAIN) the user is running a
+        # disaster simulation. The scenario dataset values will always override live API
+        # values in convert_to_risk_feature_snapshot(), so there is zero benefit in
+        # making 15 network round-trips to Open-Meteo/wttr.in (each with a 5s timeout).
+        # Skipping them reduces scenario-switch latency from ~75s → <1s.
+        # NORMAL scenario still fetches real live weather as the true baseline.
+        scenario_forces_offline = (scenario != ScenarioType.NORMAL)
+
+        # 1. Live API fetch first (NORMAL scenario only).
         # Skipped entirely while the circuit breaker is cooling down after a recent failure.
         breaker_open = (
             self._live_api_cooldown_until is not None
             and now < self._live_api_cooldown_until
         )
-        if not force_offline and not breaker_open:
+        if not force_offline and not scenario_forces_offline and not breaker_open:
             try:
                 raw_payload = self.live_adapter.fetch(latitude, longitude)
                 if raw_payload is not None:
