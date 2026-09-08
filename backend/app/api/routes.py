@@ -85,6 +85,37 @@ router = APIRouter()
 CURRENT_SCENARIO: ScenarioType = ScenarioType.NORMAL
 
 
+def _warm_observation_cache():
+    """
+    Background thread: pre-fetches live weather for all villages once at startup.
+    After this runs, all parallel API calls (/risk, /landslide, /priorities) hit the
+    in-memory cache instead of racing to call Open-Meteo 15+ times simultaneously.
+    """
+    import threading
+    import time
+
+    def _run():
+        # Small delay to let the server fully start first
+        time.sleep(3)
+        try:
+            for v in DEMO_VILLAGES:
+                pipeline_instance.get_normalized_observation(
+                    latitude=v["latitude"],
+                    longitude=v["longitude"],
+                    location_key=v["id"],
+                    scenario=ScenarioType.NORMAL,
+                )
+        except Exception:
+            pass  # Warm-up is best-effort; failures are non-critical
+
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+
+
+# Kick off cache warm-up immediately when the module loads (i.e., when Render starts).
+_warm_observation_cache()
+
+
 def compute_village_risk_detail(village_data: dict, scenario: ScenarioType) -> VillageRiskDetail:
     """Helper function to calculate complete village risk detail using normalized data pipeline."""
     obs = pipeline_instance.get_normalized_observation(
@@ -306,9 +337,14 @@ def get_evacuation_priorities():
     from app.engine.landslide_engine import calculate_landslide_risk
     from app.engine.priority_engine import calculate_evacuation_priorities
 
+    # Compute flood risk for all villages (this also fetches/caches observations).
     flood_details = [compute_village_risk_detail(v, CURRENT_SCENARIO) for v in DEMO_VILLAGES]
+
+    # Reuse cached observations for landslide — avoids a second round of 15 API calls.
     landslide_details = {}
     for v in DEMO_VILLAGES:
+        # get_normalized_observation is cache-first; these calls hit the in-memory
+        # cache populated by compute_village_risk_detail above, so no network is used.
         obs = pipeline_instance.get_normalized_observation(v["latitude"], v["longitude"], v["id"], CURRENT_SCENARIO)
         snapshot = pipeline_instance.convert_to_risk_feature_snapshot(obs, v, CURRENT_SCENARIO)
         landslide_details[v["id"]] = calculate_landslide_risk(v["id"], v["name"], snapshot)
