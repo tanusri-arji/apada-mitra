@@ -210,28 +210,36 @@ class DataIngestionPipeline:
         """
         Converts NormalizedEnvironmentObservation into the feature_snapshot dict
         expected by calculate_flash_flood_risk().
+
+        Scenario Override Logic:
+        - NORMAL: Uses real live API weather (actual current conditions).
+        - HEAVY_RAIN / EXTREME_RAIN: Always uses scenario dataset values for rainfall,
+          soil saturation, and river level — this is the user's explicit simulation intent.
+          Real terrain/geography from live API is still preserved.
         """
         demo_snapshot = get_village_feature_snapshot(village_static_data["id"], scenario)
 
-        if obs.data_state in [DataSourceState.LIVE, DataSourceState.LIVE_IOT_SENSOR, DataSourceState.LIVE_EXTERNAL_API, DataSourceState.CACHED]:
-            # Preserve the source exactly. Do not replace a missing field from a successful
-            # live/cached response with synthetic scenario data.
+        # For non-NORMAL scenarios the user is explicitly simulating a disaster event.
+        # Scenario dataset values MUST drive the hydro-meteorological inputs regardless
+        # of whether the live API returned data. Real weather (e.g. 0mm/h clear sky) would
+        # otherwise make HEAVY_RAIN and EXTREME_RAIN look identical to NORMAL.
+        if scenario != ScenarioType.NORMAL:
+            curr_rf = demo_snapshot["current_rainfall"]
+            fc_rf = demo_snapshot["forecast_rainfall"]
+            soil_sat = demo_snapshot["soil_saturation"]
+            river_lvl = demo_snapshot["river_water_level"]
+        elif obs.data_state in [DataSourceState.LIVE, DataSourceState.LIVE_IOT_SENSOR, DataSourceState.LIVE_EXTERNAL_API, DataSourceState.CACHED]:
+            # NORMAL scenario: use real current weather from live API
             curr_rf = obs.current_rainfall_mm_hr
             fc_rf = obs.forecast_rainfall_24h_mm
             soil_sat = obs.soil_saturation_pct
+            # River level is not provided by weather APIs; use demo baseline for NORMAL
+            river_lvl = obs.river_water_level_m if obs.river_water_level_m is not None else demo_snapshot["river_water_level"]
         else:
-            # Demo values are allowed only after the real/cached source is unavailable.
+            # NORMAL scenario, all sources unavailable: fall back to demo dataset
             curr_rf = obs.current_rainfall_mm_hr if obs.current_rainfall_mm_hr is not None else demo_snapshot["current_rainfall"]
             fc_rf = obs.forecast_rainfall_24h_mm if obs.forecast_rainfall_24h_mm is not None else demo_snapshot["forecast_rainfall"]
             soil_sat = obs.soil_saturation_pct if obs.soil_saturation_pct is not None else demo_snapshot["soil_saturation"]
-
-        # Never blend synthetic scenario values into a successful live observation.
-        # A real API response may legitimately omit hydrology because Open-Meteo does not
-        # provide river stage. In that case keep the feature missing so the risk engine
-        # applies its documented missing-data handling instead of silently inventing a value.
-        if obs.data_state in [DataSourceState.LIVE, DataSourceState.LIVE_IOT_SENSOR, DataSourceState.LIVE_EXTERNAL_API]:
-            river_lvl = obs.river_water_level_m
-        else:
             river_lvl = obs.river_water_level_m if obs.river_water_level_m is not None else demo_snapshot["river_water_level"]
 
         from app.engine.terrain_engine import terrain_engine_instance
