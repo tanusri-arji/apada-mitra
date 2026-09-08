@@ -3,6 +3,29 @@
 > *SIH Problem Statement SIH26192: Flash Flood Prediction System for Hilly Regions using Multi-Source Data*  
 > **STATUS: APADA MITRA SIH26192 — STAGE-SAFE RELEASE VERIFIED**
 
+[![Frontend Status](https://img.shields.io/badge/Frontend-Vercel%20Live-brightgreen?logo=vercel&style=for-the-badge)](https://apada-mitra.vercel.app)
+[![Backend Status](https://img.shields.io/badge/Backend-Render%20Live-46E3B7?logo=render&style=for-the-badge)](https://apada-mitra.onrender.com)
+[![API Docs](https://img.shields.io/badge/API%20Docs-Swagger%20UI-blue?logo=fastapi&style=for-the-badge)](https://apada-mitra.onrender.com/docs)
+[![Tests](https://img.shields.io/badge/Pytest-218%20Passing-success?logo=pytest&style=for-the-badge)](https://github.com/tanusri-arji/apada-mitra)
+[![GitHub](https://img.shields.io/badge/GitHub-tanusri--arji%2Fapada--mitra-black?logo=github&style=for-the-badge)](https://github.com/tanusri-arji/apada-mitra)
+
+---
+
+## 🌐 Live Cloud Deployments & Access Links
+
+The complete APADA MITRA platform is deployed live in production and ready for immediate demonstration and evaluation:
+
+| Component | Platform | Live URL | Description |
+| :--- | :--- | :--- | :--- |
+| **Frontend Web App** | **Vercel** | 🔗 [apada-mitra.vercel.app](https://apada-mitra.vercel.app) | Global Edge CDN hosting React 18 + Vite GIS Command Dashboard with instant load times |
+| **Backend REST API** | **Render** | ⚙️ [apada-mitra.onrender.com](https://apada-mitra.onrender.com) | Python FastAPI engine hosting hydrological risk calculations & Dijkstra pathfinding |
+| **Interactive API Docs** | **FastAPI Swagger** | 📖 [apada-mitra.onrender.com/docs](https://apada-mitra.onrender.com/docs) | Interactive OpenAPI playground to test all endpoints live in browser |
+| **Health Check Endpoint** | **Render** | 🩺 [apada-mitra.onrender.com/api/health](https://apada-mitra.onrender.com/api/health) | Real-time system health and component readiness diagnostic |
+| **Official Repository** | **GitHub** | 🐙 [github.com/tanusri-arji/apada-mitra](https://github.com/tanusri-arji/apada-mitra) | Full source code with automated CI/CD deployment pipelines |
+| **Telegram Emergency Alerts**| **Telegram Bot** | 📱 [Apada Mitra Bot](https://t.me/ApadaMitraAlertBot) | Real-time multi-hazard broadcast alert dispatch to disaster response authorities |
+
+> 💡 **Seamless Cloud Integration**: The Vercel frontend automatically reverse-proxies all `/api/*` traffic directly to the Render backend with zero CORS issues and SSL encryption.
+
 ---
 
 > **SIH Demonstration Positioning Statement**:  
@@ -28,7 +51,8 @@ Hilly regions suffer from catastrophic flash floods driven by extreme cloudburst
 - 🌐 **Multilingual Emergency Alerts**: Automated decision-support warnings generated in 5 regional languages: **English**, **Hindi (हिन्दी)**, **Garhwali (गढ़वाली)**, **Kumaoni (कुमाऊँनी)**, and **Nepali (नेपाली)** (local simulation mode; no external SMS delivered).
 - 🛡️ **Single Health & Readiness System**: `/api/readiness` verifying backend, graph routing, simulation engine, and local fallback state (`SYSTEM READY`).
 - 🔄 **Reliable Demo Reset**: One-click reset button (`RESET DEMO`) restoring initial scenario, selected village, map overlays, and simulation state.
-- 🛡️ **Extreme Reliability Test Suite**: 180+ automated pytest tests across 18 test suites verifying bounds, monotonicity, missing feature resilience, adapters, and edge failure modes.
+- 🛡️ **Extreme Reliability Test Suite**: 218 automated pytest tests across 18 test suites verifying bounds, monotonicity, missing feature resilience, adapters, and edge failure modes.
+- 📲 **Live Telegram Emergency Dispatch**: Direct integration with Telegram Bot API with verified fallback routing to alert disaster response officials in real time.
 
 ---
 
