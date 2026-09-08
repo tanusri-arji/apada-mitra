@@ -19,7 +19,9 @@ interface Props {
   isSimulationActive?: boolean;
   villages?: VillageRiskDetail[];
   onSelectVillage?: (id: string) => void;
+  onToggleSidebar?: () => void;
   onToggleMobileSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 export const Header: React.FC<Props> = ({
@@ -32,7 +34,9 @@ export const Header: React.FC<Props> = ({
   isSimulationActive = false,
   villages = [],
   onSelectVillage,
+  onToggleSidebar,
   onToggleMobileSidebar,
+  isSidebarOpen = true,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -101,13 +105,14 @@ export const Header: React.FC<Props> = ({
 
   return (
     <header className="h-16 px-3 lg:px-6 bg-[#0E1115]/90 backdrop-blur-xl border-b border-white/10 flex items-center justify-between gap-2 sm:gap-4 z-30 font-sans flex-shrink-0 relative">
-      {/* 1. Left Page Title, Subtitle & Mobile Menu Trigger */}
+      {/* 1. Left Page Title, Subtitle & Navigation Toggle */}
       <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
-        {onToggleMobileSidebar && (
+        {(onToggleSidebar || onToggleMobileSidebar) && (
           <button
-            onClick={onToggleMobileSidebar}
-            className="lg:hidden p-2 rounded-xl bg-[#14181D] hover:bg-[#1C2228] border border-white/10 text-gray-300 hover:text-[#FFB703] transition flex items-center justify-center cursor-pointer flex-shrink-0"
-            aria-label="Toggle navigation menu"
+            onClick={onToggleSidebar || onToggleMobileSidebar}
+            className="p-2 rounded-xl bg-[#14181D] hover:bg-[#1C2228] border border-white/10 text-gray-300 hover:text-[#FFB703] transition flex items-center justify-center cursor-pointer flex-shrink-0"
+            aria-label="Toggle navigation sidebar"
+            title={isSidebarOpen ? "Collapse sidebar (expand map)" : "Expand sidebar"}
           >
             <Menu className="w-5 h-5 text-[#FFB703]" />
           </button>

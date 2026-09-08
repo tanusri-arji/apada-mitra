@@ -40,10 +40,23 @@ export const AppShell: React.FC = () => {
     currentVillages,
   } = useDisasterData();
 
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = React.useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
+
+  const handleToggleSidebar = () => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setIsDesktopSidebarOpen((prev) => !prev);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    } else {
+      setIsMobileSidebarOpen((prev) => !prev);
+    }
+  };
 
   return (
     <OperationalLayout
+      isDesktopSidebarOpen={isDesktopSidebarOpen}
       isMobileSidebarOpen={isMobileSidebarOpen}
       onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
       sidebar={
@@ -69,7 +82,9 @@ export const AppShell: React.FC = () => {
           isSimulationActive={!!activeSimulation}
           villages={currentVillages}
           onSelectVillage={setSelectedVillageId}
-          onToggleMobileSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
+          onToggleSidebar={handleToggleSidebar}
+          onToggleMobileSidebar={handleToggleSidebar}
+          isSidebarOpen={isDesktopSidebarOpen}
         />
       }
       banner={

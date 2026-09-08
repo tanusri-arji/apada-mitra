@@ -5,6 +5,7 @@ interface OperationalLayoutProps {
   topBar: React.ReactNode;
   children: React.ReactNode;
   banner?: React.ReactNode;
+  isDesktopSidebarOpen?: boolean;
   isMobileSidebarOpen?: boolean;
   onCloseMobileSidebar?: () => void;
 }
@@ -14,15 +15,18 @@ export const OperationalLayout: React.FC<OperationalLayoutProps> = ({
   topBar,
   children,
   banner,
+  isDesktopSidebarOpen = true,
   isMobileSidebarOpen = false,
   onCloseMobileSidebar,
 }) => {
   return (
     <div className="flex h-screen max-h-screen w-full min-w-0 bg-[#08090B] text-white overflow-hidden overflow-x-hidden font-sans select-none relative">
-      {/* 1. Desktop Fixed Left Sidebar */}
-      <div className="hidden lg:flex flex-shrink-0 h-full">
-        {sidebar}
-      </div>
+      {/* 1. Desktop Fixed Left Sidebar (Collapsible) */}
+      {isDesktopSidebarOpen && (
+        <div className="hidden lg:flex flex-shrink-0 h-full transition-all duration-300">
+          {sidebar}
+        </div>
+      )}
 
       {/* 2. Mobile Drawer Overlay */}
       {isMobileSidebarOpen && (
