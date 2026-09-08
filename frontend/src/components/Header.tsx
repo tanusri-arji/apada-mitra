@@ -197,7 +197,7 @@ export const Header: React.FC<Props> = ({
           <SlidersHorizontal className="w-3.5 h-3.5 text-[#FF7A18]" />
           <span className="hidden xl:inline text-[10px] text-gray-400">SCENARIO:</span>
           <span className="text-white text-[10px] sm:text-xs">
-            {scenarioState?.scenario || 'HEAVY_RAIN'}
+            {scenarioState?.scenario || 'NORMAL'}
           </span>
         </button>
 

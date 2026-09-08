@@ -81,8 +81,8 @@ from app.engine.routing_engine import MOUNTAIN_ROAD_GRAPH
 
 router = APIRouter()
 
-# Global state for current scenario (defaults to HEAVY_RAIN for demo impact)
-CURRENT_SCENARIO: ScenarioType = ScenarioType.HEAVY_RAIN
+# Global state for current scenario (defaults to NORMAL for true baseline live operations)
+CURRENT_SCENARIO: ScenarioType = ScenarioType.NORMAL
 
 
 def compute_village_risk_detail(village_data: dict, scenario: ScenarioType) -> VillageRiskDetail:

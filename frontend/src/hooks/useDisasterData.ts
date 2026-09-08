@@ -181,7 +181,7 @@ export function useDisasterData() {
       setShelterRec(null);
       setActiveSimulation(null);
       setActiveTab('LIVE_MONITORING');
-      await updateScenario('HEAVY_RAIN');
+      await updateScenario('NORMAL');
       await loadData();
     } catch (err) {
       console.error('Reset error:', err);
