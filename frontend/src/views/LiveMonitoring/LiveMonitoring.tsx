@@ -69,7 +69,7 @@ export const LiveMonitoring: React.FC<Props> = ({
   );
 
   return (
-    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden relative font-sans p-2.5 lg:p-3.5 space-y-2.5 lg:space-y-3">
+    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden relative font-sans p-2.5 lg:p-3.5 pb-28 sm:pb-32 lg:pb-3.5 space-y-2.5 lg:space-y-3">
       {/* 1. TOP BENTO ROW: 6 COMPACT SENSOR METRICS CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 flex-shrink-0">
         {/* CURRENT RAINFALL */}
@@ -171,7 +171,7 @@ export const LiveMonitoring: React.FC<Props> = ({
       {/* 2. MAIN BENTO GRID: DOMINANT GIS MAP + SIDE TELEMETRY STACK */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
         {/* DOMINANT GIS MAP BENTO CARD (8 COLUMNS ON LARGE SCREEN) */}
-        <div className="lg:col-span-8 bento-card p-2 flex flex-col h-[380px] lg:h-full min-h-[340px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
+        <div className="lg:col-span-8 bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>

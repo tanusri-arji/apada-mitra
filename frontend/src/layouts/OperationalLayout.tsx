@@ -20,7 +20,7 @@ export const OperationalLayout: React.FC<OperationalLayoutProps> = ({
   onCloseMobileSidebar,
 }) => {
   return (
-    <div className="flex h-screen max-h-screen w-full min-w-0 bg-[#08090B] text-white overflow-hidden overflow-x-hidden font-sans select-none relative">
+    <div className="flex h-screen h-[100dvh] max-h-screen max-h-[100dvh] w-full min-w-0 bg-[#08090B] text-white overflow-hidden overflow-x-hidden font-sans select-none relative">
       {/* 1. Desktop Fixed Left Sidebar (Collapsible) */}
       {isDesktopSidebarOpen && (
         <div className="hidden lg:flex flex-shrink-0 h-full transition-all duration-300">

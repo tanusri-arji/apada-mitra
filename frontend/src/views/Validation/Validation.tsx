@@ -127,7 +127,7 @@ export const Validation: React.FC<Props> = ({
   const activeCaseStudyDetails = CASE_STUDY_DETAILS[activeEvent.id];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-4 space-y-3">
+    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-4 pb-28 sm:pb-32 lg:pb-4 space-y-3">
       {/* 1. TOP VALIDATION RIBBON */}
       <div className="bento-card px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono flex-shrink-0 shadow-lg">
         <div className="flex items-center gap-4">
@@ -155,7 +155,7 @@ export const Validation: React.FC<Props> = ({
       {/* 2. MAIN BENTO GRID: LEFT MAP + RIGHT REPLAY WORKSPACE */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
         {/* LEFT HISTORICAL CATCHMENT MAP BENTO (5 COLS) */}
-        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-[380px] lg:h-full min-h-[340px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
+        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <MapPin className="w-3.5 h-3.5 text-[#FF7A18]" />

@@ -93,7 +93,7 @@ export const Prediction: React.FC<Props> = ({
   const strokeDashoffset = circumference - (overallRiskScore / 100) * circumference;
 
   return (
-    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-3.5 space-y-2.5 lg:space-y-3">
+    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-3.5 pb-28 sm:pb-32 lg:pb-3.5 space-y-2.5 lg:space-y-3">
       {/* 1. TOP BENTO ROW: GLOWING SCORE + DUAL RISK + CONTROLS */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 lg:gap-3 flex-shrink-0">
         {/* GLOWING PRIMARY OVERALL RISK SCORE CARD (4 COLS) */}
@@ -283,7 +283,7 @@ export const Prediction: React.FC<Props> = ({
       {/* 2. MAIN SPLIT CONTENT: MAP + DEEP PREDICTION / WHAT-IF */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-2.5 lg:gap-3 min-h-[440px] lg:min-h-0 overflow-hidden">
         {/* LEFT SPATIAL HAZARD CONTEXT MAP (5 COLS) */}
-        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-full min-h-[300px] lg:min-h-0 overflow-hidden relative shadow-2xl">
+        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <MapPin className="w-3.5 h-3.5 text-[#FF7A18]" />

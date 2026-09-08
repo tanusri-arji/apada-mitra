@@ -119,7 +119,7 @@ export const Response: React.FC<Props> = ({
   const shelterSuitability = rawSuit != null ? Math.round(rawSuit > 1 ? rawSuit : rawSuit * 100) : null;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-4 space-y-3">
+    <div className="flex-1 flex flex-col h-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden font-sans p-2.5 lg:p-4 pb-28 sm:pb-32 lg:pb-4 space-y-3">
       {/* 1. TOP OPERATIONAL STATUS STRIP */}
       <div className="bento-card px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono flex-shrink-0 shadow-lg">
         <div className="flex items-center gap-4">
@@ -164,7 +164,7 @@ export const Response: React.FC<Props> = ({
       {/* 2. MAIN BENTO GRID: 60% EVACUATION MAP + 40% ACTION STACK */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
         {/* LARGE EVACUATION MAP BENTO (APPROX 60% / 7 COLUMNS) */}
-        <div className="lg:col-span-7 bento-card p-2 flex flex-col h-[380px] lg:h-full min-h-[340px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
+        <div className="lg:col-span-7 bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <Compass className="w-3.5 h-3.5 text-[#FF7A18]" />
