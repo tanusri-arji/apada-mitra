@@ -145,13 +145,42 @@ class DataIngestionPipeline:
         # NORMAL scenario still fetches real live weather as the true baseline.
         scenario_forces_offline = (scenario != ScenarioType.NORMAL)
 
-        # 1. Live API fetch first (NORMAL scenario only).
+        # 1a. For NORMAL: check exact-location cache FIRST before any live API call.
+        # This means only the FIRST village triggers a network fetch; the remaining
+        # 14 reuse the cached observation — reducing 15 API calls to 1.
+        if not force_offline and not scenario_forces_offline:
+            cached = self.observation_cache.get(location_key)
+            if cached is not None:
+                try:
+                    cache_time = datetime.fromisoformat(cached.observation_timestamp)
+                    age_secs = max(0.0, (now - cache_time).total_seconds())
+                except Exception:
+                    age_secs = float("inf")
+                if age_secs < self.cache_ttl_seconds:
+                    cached.freshness_seconds = age_secs
+                    base_obs = DataQualityEngine.validate_observation(cached)
+
+            # 1b. Regional cache (villages with same rounded lat/lon share a fetch).
+            if base_obs is None:
+                region_key = f"{round(latitude, 1)},{round(longitude, 1)}"
+                cached_region = self.observation_cache.get(region_key)
+                if cached_region is not None:
+                    try:
+                        cache_time = datetime.fromisoformat(cached_region.observation_timestamp)
+                        age_secs = max(0.0, (now - cache_time).total_seconds())
+                    except Exception:
+                        age_secs = float("inf")
+                    if age_secs < self.cache_ttl_seconds:
+                        cached_region.freshness_seconds = age_secs
+                        base_obs = DataQualityEngine.validate_observation(cached_region)
+
+        # 2. Live API fetch for NORMAL (only if cache missed).
         # Skipped entirely while the circuit breaker is cooling down after a recent failure.
         breaker_open = (
             self._live_api_cooldown_until is not None
             and now < self._live_api_cooldown_until
         )
-        if not force_offline and not scenario_forces_offline and not breaker_open:
+        if base_obs is None and not force_offline and not scenario_forces_offline and not breaker_open:
             try:
                 raw_payload = self.live_adapter.fetch(latitude, longitude)
                 if raw_payload is not None:
@@ -171,34 +200,8 @@ class DataIngestionPipeline:
                 self._live_api_cooldown_until = now + timedelta(
                     seconds=self._live_api_cooldown_seconds
                 )
-        # 2. Exact-location cache fallback after live API failure/unavailability.
-        if base_obs is None and not force_offline:
-            cached = self.observation_cache.get(location_key)
-            if cached is not None:
-                try:
-                    cache_time = datetime.fromisoformat(cached.observation_timestamp)
-                    age_secs = max(0.0, (now - cache_time).total_seconds())
-                except Exception:
-                    age_secs = float("inf")
-                if age_secs < self.cache_ttl_seconds:
-                    cached.freshness_seconds = age_secs
-                    base_obs = DataQualityEngine.validate_observation(cached)
 
-        # 3. Regional watershed cache fallback after exact cache/live failure.
-        if base_obs is None and not force_offline:
-            region_key = f"{round(latitude, 1)},{round(longitude, 1)}"
-            cached_region = self.observation_cache.get(region_key)
-            if cached_region is not None:
-                try:
-                    cache_time = datetime.fromisoformat(cached_region.observation_timestamp)
-                    age_secs = max(0.0, (now - cache_time).total_seconds())
-                except Exception:
-                    age_secs = float("inf")
-                if age_secs < self.cache_ttl_seconds:
-                    cached_region.freshness_seconds = age_secs
-                    base_obs = DataQualityEngine.validate_observation(cached_region)
-
-        # 4. Offline Demo Dataset
+        # 3. Offline Demo Dataset (final fallback for all scenarios).
         if base_obs is None:
             demo_adapter = OfflineDemoAdapter(scenario=scenario)
             raw_demo = demo_adapter.fetch(latitude, longitude)

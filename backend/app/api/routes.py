@@ -210,7 +210,12 @@ def update_scenario(payload: ScenarioUpdateRequest):
     """Updates active weather scenario (NORMAL, HEAVY_RAIN, EXTREME_RAIN)."""
     global CURRENT_SCENARIO
     CURRENT_SCENARIO = payload.scenario
-    pipeline_instance.clear_cache()
+    # NOTE: We deliberately do NOT call pipeline_instance.clear_cache() here.
+    # Weather observations (NormalizedEnvironmentObservation) are real atmospheric
+    # data fetched from Open-Meteo / wttr.in — they are scenario-independent.
+    # Clearing them forces 15 fresh API calls on every scenario switch, adding
+    # 15-30 seconds of latency. The existing 3-hour TTL handles natural expiry.
+    # Scenario changes only affect how convert_to_risk_feature_snapshot() uses the data.
     sc_meta = SCENARIO_INPUT_MULTIPLIERS[CURRENT_SCENARIO]
     return ScenarioStateResponse(
         scenario=CURRENT_SCENARIO,
