@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { fetchRiskOverview, fetchVillagesList } from '../../api/client';
 import { RiskOverviewResponse, RiskLevel } from '../../types';
-import { Activity } from 'lucide-react';
+import { Activity, X } from 'lucide-react';
 
 const SECTOR_COUNT = 8;
 
@@ -13,6 +13,7 @@ export const RiskRadar: React.FC = () => {
   const [villageCount, setVillageCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [sweepAngle, setSweepAngle] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -43,15 +44,6 @@ export const RiskRadar: React.FC = () => {
     return () => clearInterval(id);
   }, []);
 
-  if (loading) {
-    const loadingNode = (
-      <div className="fixed bottom-6 right-6 z-[999999] p-4 text-xs text-gray-500 font-mono bg-black/50 rounded-xl border border-cyan-400/30 shadow-2xl">
-        Loading Risk Radar…
-      </div>
-    );
-    return typeof document !== 'undefined' ? createPortal(loadingNode, document.body) : null;
-  }
-
   const impact = overview?.impact_summary ?? null;
   const total = impact?.total_villages ?? villageCount ?? 0;
 
@@ -75,67 +67,91 @@ export const RiskRadar: React.FC = () => {
   const moderate = impact?.moderate_villages_count ?? 0;
   const _low = lowCount;
 
-  const content = (
-    <aside className="fixed bottom-6 right-6 w-[220px] h-[220px] z-[999999]">
-      <div className="relative w-full h-full">
-        {/* Radar Sweep */}
-        <div className="absolute inset-0 rounded-full border-2 border-cyan-400/40 shadow-cyan-400/20 shadow-[0_0_12px_4px_rgba(0,255,255,0.1)] overflow-hidden"></div>
-        <div
-          className="absolute inset-0 rounded-full pointer-events-none"
-          style={{
-            transform: `rotate(${sweepAngle}deg)`,
-            background: `conic-gradient(
-              0deg,
-              rgba(0, 255, 255, 0.12) 0deg,
-              transparent 45deg,
-              transparent 360deg
-            )`,
-          }}
-        />
-        {sectors.map((lvl, i) => {
-          const color = lvl === 'critical' ? 'bg-red-500' : lvl === 'high' ? 'bg-amber-400' : lvl === 'moderate' ? 'bg-yellow-400' : 'bg-emerald-400';
-          return (
-            <div
-              key={i}
-              className={`absolute w-2 h-2 rounded-full ${color} border border-white/30`}
-              style={{
-                left: '50%',
-                top: '50%',
-                transform: `rotate(${(360 / SECTOR_COUNT) * i}deg) translate(40px)`,
-                transformOrigin: '0 0',
-              }}
-            />
-          );
-        })}
-
-        {/* Center Label */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-          <div className="text-cyan-300 font-black text-xs font-mono">Risk Radar</div>
-          <div className="text-gray-400 text-[10px] mt-0.5">Live</div>
-        </div>
-
-        {/* Stats Grid Around */}
-        <div className="absolute top-1 left-1/2 -translate-x-1/2 text-center text-[8px] font-mono text-gray-300">
-          {critical} CRIT
-        </div>
-        <div className="absolute top-1/2 left-0.5 -translate-y-1/2 text-center text-[8px] font-mono text-gray-300">
-          {high} HIGH
-        </div>
-        <div className="absolute top-1/2 right-0.5 -translate-y-1/2 text-center text-[8px] font-mono text-gray-300">
-          {moderate} MED
-        </div>
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-center text-[8px] font-mono text-gray-300">
-          {_low} LOW ({total} total)
-        </div>
-
-        {/* Mini HUD Counter */}
-        <div className="absolute bottom-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/50 border border-cyan-400/30 text-cyan-300 font-mono text-[9px]">
-          <Activity className="w-2.5 h-2.5 animate-pulse" />
-          Live
-        </div>
-      </div>
-    </aside>
+  const toggleButton = (
+    <button
+      onClick={() => setIsOpen(true)}
+      className="fixed bottom-6 right-6 z-[999998] flex items-center gap-2 px-4 py-2 bg-[#0E1115]/90 backdrop-blur-xl border border-cyan-400/30 rounded-full text-cyan-300 font-mono text-xs hover:bg-cyan-950 transition-colors shadow-lg shadow-cyan-900/20"
+    >
+      <Activity className={`w-4 h-4 ${loading ? 'animate-pulse' : ''}`} />
+      <span>{loading ? 'SYNCING...' : 'RISK RADAR'}</span>
+    </button>
   );
 
-  return typeof document !== 'undefined' ? createPortal(content, document.body) : null;
+  const modalContent = isOpen ? (
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="relative p-10 bg-[#08090B] border border-cyan-400/20 rounded-2xl shadow-2xl flex flex-col items-center">
+        
+        <button 
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <h3 className="text-cyan-300 font-mono font-bold text-lg mb-8 tracking-widest flex items-center gap-2">
+          <Activity className="w-5 h-5" />
+          LIVE RISK RADAR
+        </h3>
+
+        <div className="relative w-[280px] h-[280px]">
+          <div className="absolute inset-0 rounded-full border-2 border-cyan-400/40 shadow-[0_0_20px_rgba(0,255,255,0.15)] overflow-hidden"></div>
+          <div
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={{
+              transform: `rotate(${sweepAngle}deg)`,
+              background: `conic-gradient(
+                0deg,
+                rgba(0, 255, 255, 0.15) 0deg,
+                transparent 45deg,
+                transparent 360deg
+              )`,
+            }}
+          />
+          {sectors.map((lvl, i) => {
+            const color = lvl === 'critical' ? 'bg-red-500' : lvl === 'high' ? 'bg-amber-400' : lvl === 'moderate' ? 'bg-yellow-400' : 'bg-emerald-400';
+            return (
+              <div
+                key={i}
+                className={`absolute w-3 h-3 rounded-full ${color} border border-white/30`}
+                style={{
+                  left: '50%',
+                  top: '50%',
+                  transform: `rotate(${(360 / SECTOR_COUNT) * i}deg) translate(70px)`,
+                  transformOrigin: '0 0',
+                }}
+              />
+            );
+          })}
+
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-center text-[11px] font-mono text-gray-300 whitespace-nowrap">
+            {critical} CRITICAL
+          </div>
+          <div className="absolute top-1/2 -left-12 -translate-y-1/2 text-center text-[11px] font-mono text-gray-300">
+            {high} HIGH
+          </div>
+          <div className="absolute top-1/2 -right-14 -translate-y-1/2 text-center text-[11px] font-mono text-gray-300">
+            {moderate} MOD
+          </div>
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-center text-[11px] font-mono text-gray-300 whitespace-nowrap">
+            {_low} LOW (of {total})
+          </div>
+        </div>
+        
+        <div className="mt-8 flex items-center justify-center gap-4 text-[10px] font-mono text-gray-400">
+          <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span> CRIT</div>
+          <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> HIGH</div>
+          <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400 inline-block"></span> MOD</div>
+          <div className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> LOW</div>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
+  return typeof document !== 'undefined' ? createPortal(
+    <>
+      {!isOpen && toggleButton}
+      {modalContent}
+    </>,
+    document.body
+  ) : null;
 };
