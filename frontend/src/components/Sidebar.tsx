@@ -13,6 +13,7 @@ import {
   Sparkles,
   LayoutDashboard,
   X,
+  Radar,
 } from 'lucide-react';
 
 interface Props {
@@ -74,6 +75,13 @@ export const Sidebar: React.FC<Props> = ({
       subtitle: 'Historical Case Studies & Replay',
       icon: FileCheck,
       badge: 'CASE STUDY',
+    },
+    {
+      id: 'COMMAND_RADAR',
+      step: '05',
+      label: 'COMMAND RADAR',
+      subtitle: 'Live System Sonar HUD',
+      icon: Radar,
     },
   ];
 

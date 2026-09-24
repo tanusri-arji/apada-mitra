@@ -4,6 +4,7 @@ import { LiveMonitoring } from '../views/LiveMonitoring/LiveMonitoring';
 import { Prediction } from '../views/Prediction/Prediction';
 import { Response } from '../views/Response/Response';
 import { Validation } from '../views/Validation/Validation';
+import { RiskRadar } from '../components/radar/RiskRadar';
 
 interface AppRouterProps {
   activeTab: TopLevelView;
@@ -105,6 +106,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           shelters={shelters}
         />
       );
+
+    case 'COMMAND_RADAR':
+      return <RiskRadar />;
 
     default:
       return (

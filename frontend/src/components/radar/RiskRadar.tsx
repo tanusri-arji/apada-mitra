@@ -1,22 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import { fetchRiskOverview, fetchVillagesList } from '../../api/client';
 import { RiskOverviewResponse, RiskLevel } from '../../types';
-import { X, Radar } from 'lucide-react';
+import { Radar } from 'lucide-react';
 
 const SECTOR_COUNT = 8;
 const levelOrder: RiskLevel[] = ['LOW', 'MODERATE', 'HIGH', 'CRITICAL'];
+const SECTOR_NAMES = [
+  'ALAKNANDA FAULT',
+  'MANDAKINI GORGE',
+  'BEAS CATCHMENT',
+  'IRUVAIPUZHA BASIN',
+  'MAIN CENTRAL THRUST',
+  'SIWALIK RIDGELINE',
+  'WESTERN GHATS SCARP',
+  'HIMALAYAN OUTFLOW'
+];
 
 export const RiskRadar: React.FC = () => {
   const [overview, setOverview] = useState<RiskOverviewResponse | null>(null);
   const [villageCount, setVillageCount] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
   const [sweepAngle, setSweepAngle] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
-      setLoading(true);
       const [riskRes, vList] = await Promise.all([
         fetchRiskOverview().catch(() => null),
         fetchVillagesList().catch(() => []),
@@ -25,8 +31,6 @@ export const RiskRadar: React.FC = () => {
       if (vList) setVillageCount(vList.length);
     } catch (err) {
       console.error('Radar load error:', err);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -63,28 +67,12 @@ export const RiskRadar: React.FC = () => {
 
   const critical = impact?.critical_villages_count ?? 0;
   const high = impact?.high_villages_count ?? 0;
-  
-  const toggleButton = (
-    <button
-      onClick={() => setIsOpen(true)}
-      className="fixed bottom-6 right-6 z-[999998] flex items-center gap-2 px-5 py-3 bg-[#020606]/90 backdrop-blur-xl border border-emerald-500/30 rounded-full text-emerald-400 font-mono text-xs hover:bg-emerald-950/50 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-    >
-      <Radar className={`w-5 h-5 ${loading ? 'animate-pulse' : ''}`} />
-      <span className="font-bold tracking-wider">{loading ? 'SYNCING...' : 'COMMAND RADAR'}</span>
-    </button>
-  );
 
-  const modalContent = isOpen ? (
-    <div className="fixed inset-0 z-[999999] flex items-center justify-center bg-[#040909]/80 backdrop-blur-md">
-      <div className="relative p-10 bg-[#020606] border border-emerald-500/20 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,255,150,0.1)] flex flex-col items-center">
+  return (
+    <div className="flex-1 w-full h-full flex items-center justify-center gap-8 bg-[#08090B] overflow-hidden p-4">
+      {/* Radar Main Panel */}
+      <div className="relative p-10 bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,255,150,0.1)] flex flex-col items-center flex-shrink-0">
         
-        <button 
-          onClick={() => setIsOpen(false)}
-          className="absolute top-6 right-6 text-emerald-700 hover:text-emerald-300 transition-colors bg-emerald-950/30 p-2 rounded-full"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
         <h3 className="text-emerald-400 font-mono font-bold text-xl mb-8 tracking-widest flex items-center gap-3">
           <Radar className="w-6 h-6 animate-pulse" />
           COMMAND CENTER SONAR
@@ -159,11 +147,11 @@ export const RiskRadar: React.FC = () => {
                 style={{ 
                   left: `${x}px`, 
                   top: `${y}px`, 
-                  transform: `translate(-50%, -50%) rotate(${textRot}deg)`
-                }}
-              >
-                Sector {String.fromCharCode(65 + i)}
-              </div>
+                transform: `translate(-50%, -50%) rotate(${textRot}deg)`
+              }}
+            >
+              {SECTOR_NAMES[i]}
+            </div>
             );
           })}
 
@@ -186,14 +174,49 @@ export const RiskRadar: React.FC = () => {
         </div>
 
       </div>
-    </div>
-  ) : null;
 
-  return typeof document !== 'undefined' ? createPortal(
-    <>
-      {!isOpen && toggleButton}
-      {modalContent}
-    </>,
-    document.body
-  ) : null;
+      {/* Side Panel for Village List */}
+      <div className="w-[320px] max-h-[640px] h-full bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-3xl shadow-[0_0_40px_rgba(0,255,150,0.05)] p-6 flex flex-col flex-shrink-0">
+        <h3 className="text-emerald-400 font-mono font-bold text-sm tracking-widest mb-4 border-b border-emerald-500/20 pb-3 flex items-center justify-between">
+          <span>MONITORED NODES</span>
+          <span className="text-white bg-emerald-500/20 px-2 py-0.5 rounded text-[10px]">{total} TOTAL</span>
+        </h3>
+        
+        <div className="flex-1 overflow-y-auto pr-2 space-y-2 pb-4 scrollbar-thin scrollbar-thumb-emerald-900/50 scrollbar-track-transparent">
+          {(overview?.villages_risk ?? []).map((v) => {
+            const isCritical = levelOrder.indexOf(v.risk_level) >= 3;
+            const isHigh = levelOrder.indexOf(v.risk_level) >= 2 && !isCritical;
+            const isMod = levelOrder.indexOf(v.risk_level) >= 1 && !isHigh && !isCritical;
+            
+            const colorClass = isCritical ? 'text-red-400' : isHigh ? 'text-orange-400' : isMod ? 'text-yellow-400' : 'text-emerald-400';
+            const bgClass = isCritical ? 'bg-red-500/10 border-red-500/30' : isHigh ? 'bg-orange-500/10 border-orange-500/30' : isMod ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-emerald-500/10 border-emerald-500/30';
+            const dotClass = isCritical ? 'bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse' : isHigh ? 'bg-orange-500 shadow-[0_0_8px_#f97316]' : isMod ? 'bg-yellow-500 shadow-[0_0_8px_#eab308]' : 'bg-emerald-500 shadow-[0_0_8px_#10b981]';
+
+            return (
+              <div key={v.village_id} className={`p-3 rounded-xl border ${bgClass} flex items-center justify-between group transition-all hover:scale-[1.02] cursor-default`}>
+                <div className="flex flex-col min-w-0 pr-3">
+                  <span className="font-bold text-white text-xs truncate">{v.village_name}</span>
+                  <span className={`font-mono text-[9px] mt-0.5 uppercase tracking-wider ${colorClass}`}>{v.risk_level} RISK</span>
+                </div>
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="text-right">
+                    <span className={`block font-mono font-bold text-sm ${colorClass}`}>
+                      {Math.round(v.flash_flood_risk_score ?? 0)}%
+                    </span>
+                  </div>
+                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${dotClass}`}></div>
+                </div>
+              </div>
+            );
+          })}
+          
+          {(!overview?.villages_risk || overview.villages_risk.length === 0) && (
+            <div className="text-center text-gray-500 font-mono text-xs py-10">
+              No nodes detected or syncing...
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };

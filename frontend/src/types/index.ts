@@ -253,7 +253,8 @@ export type TopLevelView =
   | 'LIVE_MONITORING'
   | 'PREDICTION'
   | 'EVACUATION_ACTION'
-  | 'VALIDATION_REPLAY';
+  | 'VALIDATION_REPLAY'
+  | 'COMMAND_RADAR';
 
 export interface StationRegionInfo {
   villageId: string;

@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Mountain,
   Layers,
+  X,
 } from 'lucide-react';
 
 export type RegionFilter = 'ALL' | 'UTTARAKHAND' | 'HIMACHAL' | 'KERALA';
@@ -928,51 +929,67 @@ if (!layer) return;
           </div>
         </div>
 
-        {/* Floating Bottom Legend - Collapsible on Mobile */}
-        <div className="absolute bottom-3 right-3 z-[400]">
-          {/* Mobile Toggle Button */}
-          <button
-            onClick={() => setIsLegendOpen(!isLegendOpen)}
-            className="sm:hidden px-2.5 py-1 rounded-xl bg-[#14181D]/95 border border-white/20 text-[10px] font-mono font-bold text-[#FFB703] shadow-lg backdrop-blur-md flex items-center gap-1.5 cursor-pointer ml-auto mb-1"
-          >
-            <Layers className="w-3 h-3 text-[#FF7A18]" />
-            <span>{isLegendOpen ? 'Hide Legend ▲' : 'Map Legend ▼'}</span>
-          </button>
+        {/* Floating Bottom Legend */}
+        <div className="absolute bottom-3 right-3 z-[400] flex flex-col items-end">
+          {/* Toggle Button */}
+          {!isLegendOpen && (
+            <button
+              onClick={() => setIsLegendOpen(true)}
+              className="px-2.5 py-1 rounded-xl bg-[#14181D]/95 border border-white/20 text-[10px] font-mono font-bold text-[#FFB703] shadow-lg backdrop-blur-md flex items-center gap-1.5 cursor-pointer transition hover:bg-[#1C2228] hover:border-[#FF7A18]/50 animate-in fade-in zoom-in duration-200"
+            >
+              <Layers className="w-3 h-3 text-[#FF7A18]" />
+              <span>Map Legend ▼</span>
+            </button>
+          )}
 
-          {/* Legend Box */}
-          <div className={`${isLegendOpen ? 'block' : 'hidden'} sm:block bg-[#14181D]/95 border border-white/15 rounded-2xl p-2.5 shadow-2xl backdrop-blur-md text-[10px] font-mono space-y-1.5 pointer-events-auto max-w-[260px]`}>
-            <div className="flex items-center justify-between border-b border-white/10 pb-1 text-white font-bold">
-              <span>GIS MAP LEGEND</span>
-              <span className="text-gray-400">15 NODES</span>
-            </div>
+          {/* Small localized Legend Pop-up */}
+          {isLegendOpen && (
+            <div className="bg-[#14181D]/95 border border-[#FF7A18]/40 rounded-2xl p-3 shadow-2xl backdrop-blur-md text-[10px] font-mono max-w-[260px] shadow-[0_0_20px_rgba(255,122,24,0.15)] animate-in fade-in slide-in-from-bottom-2 duration-200 relative">
+              {/* Close Button */}
+              <button 
+                onClick={() => setIsLegendOpen(false)}
+                className="absolute top-2 right-2 text-gray-400 hover:text-white transition bg-white/5 hover:bg-white/10 rounded-full p-1 cursor-pointer"
+              >
+                <X className="w-3 h-3" />
+              </button>
 
-            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-gray-400">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-white">Critical Risk</span>
+              <div className="flex items-center gap-1.5 border-b border-white/10 pb-2 mb-2 pr-6 text-white font-bold">
+                <Layers className="w-3.5 h-3.5 text-[#FF7A18]" />
+                <span>GIS MAP LEGEND</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span>Mod/High Risk</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span>Low Risk</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-[#181D22] border border-white" />
-                <span>Relief Shelter</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-emerald-500" />
-                <span>Open Road</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-red-500 border-dashed" />
-                <span>Blocked Road</span>
+
+              <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-gray-300">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_5px_#ef4444] animate-pulse" />
+                  <span className="text-white">Critical Risk</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_5px_#f97316]" />
+                  <span>High Risk</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_5px_#f59e0b]" />
+                  <span>Moderate</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]" />
+                  <span>Low Risk</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded bg-[#181D22] border border-white" />
+                  <span>Shelter</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-3 h-0.5 bg-emerald-500 shadow-[0_0_3px_#10b981]" />
+                  <span>Open Road</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-3 h-0.5 bg-red-500 border-dashed shadow-[0_0_3px_#ef4444]" />
+                  <span>Blocked</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

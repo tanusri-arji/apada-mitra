@@ -6,7 +6,6 @@ import { OperationalLayout } from '../layouts/OperationalLayout';
 import { AppRouter } from './AppRouter';
 import { ScenarioControl } from '../components/ScenarioControl';
 import { EmergencySmsModal } from '../components/EmergencySmsModal';
-import { RiskRadar } from '../components/radar/RiskRadar';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export const AppShell: React.FC = () => {
@@ -143,8 +142,6 @@ export const AppShell: React.FC = () => {
         priorityDetail={priorities.find((p) => p.village_id === selectedVillageId)}
       />
 
-      {/* Live Risk Radar Overlay (non-intrusive HUD) */}
-      <RiskRadar />
     </OperationalLayout>
   );
 };
