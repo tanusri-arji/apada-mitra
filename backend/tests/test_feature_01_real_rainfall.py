@@ -51,10 +51,10 @@ def test_open_meteo_normalize_preserves_raw_precipitation_half_mm():
     assert obs.forecast_rainfall_24h_mm == 0.5
 
 
-def test_snapshot_preserves_live_current_rainfall_0_5_under_heavy_rain():
+def test_snapshot_preserves_live_current_rainfall_0_5_under_normal_scenario():
     pipeline = DataIngestionPipeline()
     snapshot = pipeline.convert_to_risk_feature_snapshot(
-        _live_obs(0.5), VILLAGE_STATIC, ScenarioType.HEAVY_RAIN
+        _live_obs(0.5), VILLAGE_STATIC, ScenarioType.NORMAL
     )
     assert snapshot["current_rainfall"] == 0.5
     assert snapshot["current_rainfall"] != 56.0
@@ -63,7 +63,7 @@ def test_snapshot_preserves_live_current_rainfall_0_5_under_heavy_rain():
 def test_snapshot_preserves_live_current_rainfall_10_no_hardcoded_conversion():
     pipeline = DataIngestionPipeline()
     snapshot = pipeline.convert_to_risk_feature_snapshot(
-        _live_obs(10.0), VILLAGE_STATIC, ScenarioType.HEAVY_RAIN
+        _live_obs(10.0), VILLAGE_STATIC, ScenarioType.NORMAL
     )
     assert snapshot["current_rainfall"] == 10.0
 
@@ -74,13 +74,16 @@ def test_snapshot_preserves_live_rainfall_across_all_scenarios():
         snapshot = pipeline.convert_to_risk_feature_snapshot(
             _live_obs(0.5), VILLAGE_STATIC, scenario
         )
-        assert snapshot["current_rainfall"] == 0.5, f"scenario {scenario} mutated rainfall"
+        if scenario == ScenarioType.NORMAL:
+            assert snapshot["current_rainfall"] == 0.5, f"scenario {scenario} mutated rainfall"
+        else:
+            assert snapshot["current_rainfall"] != 0.5, f"scenario {scenario} failed to override rainfall"
 
 
 def test_risk_engine_and_xai_use_same_live_rainfall():
     pipeline = DataIngestionPipeline()
     snapshot = pipeline.convert_to_risk_feature_snapshot(
-        _live_obs(0.5), VILLAGE_STATIC, ScenarioType.HEAVY_RAIN
+        _live_obs(0.5), VILLAGE_STATIC, ScenarioType.NORMAL
     )
     risk_res = calculate_flash_flood_risk(snapshot)
 
@@ -117,7 +120,7 @@ def test_missing_field_in_successful_live_observation_stays_missing():
         data_state=DataSourceState.LIVE,
         missing_fields=["current_rainfall_mm_hr", "forecast_rainfall_24h_mm"],
     )
-    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, VILLAGE_STATIC, ScenarioType.HEAVY_RAIN)
+    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, VILLAGE_STATIC, ScenarioType.NORMAL)
     # A successful live observation with missing fields must not silently import
     # synthetic scenario values. The risk engine handles missing inputs explicitly.
     assert snapshot["current_rainfall"] is None

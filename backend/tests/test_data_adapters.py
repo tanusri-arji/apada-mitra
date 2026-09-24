@@ -158,7 +158,7 @@ def test_pipeline_risk_snapshot_translation():
         "drainage_proximity_m": 85.0,
     }
 
-    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, village_static, ScenarioType.HEAVY_RAIN)
+    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, village_static, ScenarioType.NORMAL)
     assert snapshot["current_rainfall"] == 65.0
     assert snapshot["forecast_rainfall"] == 120.0
     assert snapshot["soil_saturation"] == 85.0

@@ -6,7 +6,8 @@ import json
 import urllib.request
 from typing import List, Dict, Optional, Any
 from datetime import datetime, timezone
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 from app.models.domain import (
     ScenarioType,
@@ -255,6 +256,29 @@ def update_scenario(payload: ScenarioUpdateRequest):
         active_villages_count=len(DEMO_VILLAGES),
         last_updated=datetime.now(timezone.utc).isoformat(),
     )
+
+
+@router.post("/reset-demo")
+def reset_demo_state():
+    """
+    One-click demo reset (README 'RESET DEMO'). Restores baseline state and clears
+    all *volatile in-memory* demo state only: active scenario -> NORMAL, the IoT
+    sensor store, active operational incidents, and the audit-trail buffer.
+    Engine logic, road graph, shelter data, and static datasets are untouched.
+    """
+    global CURRENT_SCENARIO
+    CURRENT_SCENARIO = ScenarioType.NORMAL
+    iot_store_instance.clear()
+    INCIDENT_STATUS_MAP.clear()
+    AUDIT_LOG_ENTRIES.clear()
+    return {
+        "status": "OK",
+        "message": "Demo state reset to baseline (scenario=NORMAL).",
+        "scenario": CURRENT_SCENARIO.value if hasattr(CURRENT_SCENARIO, "value") else CURRENT_SCENARIO,
+        "iot_sensors_active": 0,
+        "active_incidents": 0,
+        "audit_trail_entries": 0,
+    }
 
 
 @router.get("/villages", response_model=List[VillageBase])
@@ -543,9 +567,46 @@ def get_audit_trail():
 from app.models.iot import IoTSensorRecord
 from app.engine.iot_store import iot_store_instance
 
+_iot_bearer = HTTPBearer(auto_error=False)
+_IOT_API_KEY_PLACEHOLDER = "<INSERT_YOUR_IOT_API_KEY>"
+
+
+def _require_iot_api_key() -> Optional[str]:
+    """Returns the configured bearer key for IoT ingest, or None for Local Demo Mode."""
+    key = os.getenv("IOT_INGEST_API_KEY", _IOT_API_KEY_PLACEHOLDER)
+    if not key or key == _IOT_API_KEY_PLACEHOLDER:
+        return None
+    return key
+
+
+def verify_iot_ingest_auth(
+    credentials: Optional[HTTPAuthorizationCredentials] = Security(_iot_bearer),
+):
+    """
+    Optional auth gate for POST /iot/sensors/ingest.
+
+    Local Demo Mode (IOT_INGEST_API_KEY unset/placeholder): ingestion stays open,
+    mirroring the Telegram Local Mode pattern, so the demo and tests are unaffected.
+    Secured Mode (IOT_INGEST_API_KEY set): requires an
+    `Authorization: Bearer <key>` header, otherwise HTTP 401.
+    """
+    required = _require_iot_api_key()
+    if required is None:
+        return None
+    if credentials is None or credentials.credentials != required:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized: valid IOT_INGEST_API_KEY bearer token required.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return credentials.credentials
+
 
 @router.post("/iot/sensors/ingest", response_model=IoTSensorRecord)
-def ingest_iot_sensor_observation(payload: Dict[str, Any]):
+def ingest_iot_sensor_observation(
+    payload: Dict[str, Any],
+    _: Optional[str] = Depends(verify_iot_ingest_auth),
+):
     """
     Ingests real-time IoT sensor observation (rainfall, soil_moisture, or water_level).
     Validates village registration, sensor types, non-negative values, valid units, and timestamps.
@@ -1056,7 +1117,17 @@ def dispatch_telegram_alert(payload: TelegramDispatchRequest):
     Direct server-side dispatch of multilingual emergency alerts to Telegram.
     Bypasses client browser CORS and adblockers, provides detailed error diagnosis.
     """
-    token = payload.bot_token or os.getenv("TELEGRAM_BOT_TOKEN", "8930236949:AAF4IO2am0V31BonD-bciYLuQHJCdK02NXc")
+    token = payload.bot_token or os.getenv("TELEGRAM_BOT_TOKEN", "<INSERT_YOUR_TELEGRAM_BOT_TOKEN>")
+    
+    if token == "<INSERT_YOUR_TELEGRAM_BOT_TOKEN>":
+        return TelegramDispatchResponse(
+            success=True,
+            status_code=200,
+            chat_id=payload.chat_id,
+            message="Alert successfully simulated (Local Mode). Insert Bot Token in .env for real dispatch.",
+            telegram_response={"ok": True, "description": "simulated"}
+        )
+
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     
     body = {

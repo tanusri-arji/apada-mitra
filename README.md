@@ -22,7 +22,7 @@ The complete APADA MITRA platform is deployed live in production and ready for i
 | **Interactive API Docs** | **FastAPI Swagger** | 📖 [apada-mitra.onrender.com/docs](https://apada-mitra.onrender.com/docs) | Interactive OpenAPI playground to test all endpoints live in browser |
 | **Health Check Endpoint** | **Render** | 🩺 [apada-mitra.onrender.com/api/health](https://apada-mitra.onrender.com/api/health) | Real-time system health and component readiness diagnostic |
 | **Official Repository** | **GitHub** | 🐙 [github.com/tanusri-arji/apada-mitra](https://github.com/tanusri-arji/apada-mitra) | Full source code with automated CI/CD deployment pipelines |
-| **Telegram Emergency Alerts**| **Telegram Bot** | 📱 [Apada Mitra Bot](https://t.me/ApadaMitraAlertBot) | Real-time multi-hazard broadcast alert dispatch to disaster response authorities |
+| **Telegram Emergency Alerts**| **Telegram Bot** | 📱 Apada Mitra Bot | Telegram Bot API dispatch (simulated Local Mode by default; real dispatch when a valid bot token is set in backend/.env) |
 
 > 💡 **Seamless Cloud Integration**: The Vercel frontend automatically reverse-proxies all `/api/*` traffic directly to the Render backend with zero CORS issues and SSL encryption.
 
@@ -52,7 +52,7 @@ Hilly regions suffer from catastrophic flash floods driven by extreme cloudburst
 - 🛡️ **Single Health & Readiness System**: `/api/readiness` verifying backend, graph routing, simulation engine, and local fallback state (`SYSTEM READY`).
 - 🔄 **Reliable Demo Reset**: One-click reset button (`RESET DEMO`) restoring initial scenario, selected village, map overlays, and simulation state.
 - 🛡️ **Extreme Reliability Test Suite**: 218 automated pytest tests across 18 test suites verifying bounds, monotonicity, missing feature resilience, adapters, and edge failure modes.
-- 📲 **Live Telegram Emergency Dispatch**: Direct integration with Telegram Bot API with verified fallback routing to alert disaster response officials in real time.
+- 📲 **Telegram Emergency Dispatch**: Direct server-side dispatch to Telegram Bot API with a graceful simulated Local Mode fallback when no bot token is configured.
 
 ---
 
@@ -118,8 +118,9 @@ APADA MITRA integrates real-world data adapters alongside transparent fallback s
 - **Terrain & GIS Rasters**: Static Copernicus 30m DEM elevation and GSI historical landslide catalog records.
 - **Road Network**: OpenStreetMap (OSM) road graph topology. Note: road hazard statuses (`OPEN`, `DEGRADED`, `BLOCKED`) are dynamically evaluated by the routing engine, as OSM does not provide live road closure telemetry.
 - **Hydrology / River Stages**: Configured CWC baseline and watershed flow-accumulation models (direct live CWC API streaming is not publicly open).
-- **Relief Shelters**: APADA MITRA maintains a geographically distributed 33 shelter candidate network sourced from publicly documented government facilities (USDMA/DDMP Chamoli, Rudraprayag, HPSDMA Mandi, and KSDMA Wayanad). Verification levels (`REAL_STATIC_GOVERNMENT`, `DERIVED_FROM_REAL_SOURCE`) and capacity availability are explicitly represented. The system does not fabricate shelter capacity or official designation. External live shelter occupancy/capacity feeds are not connected unless an official source is actually available.
+- **Relief Shelters**: APADA MITRA maintains a geographically distributed 63 shelter candidates network sourced from publicly documented government facilities (USDMA/DDMP Chamoli, Rudraprayag, HPSDMA Mandi, and KSDMA Wayanad). Verification levels (`REAL_STATIC_GOVERNMENT`, `DERIVED_FROM_REAL_SOURCE`) and capacity availability are explicitly represented. The system does not fabricate shelter capacity or official designation. External live shelter occupancy/capacity feeds are not connected unless an official source is actually available.
 - **Emergency Alerts**: Local decision-support dispatch simulation; no external SMS is transmitted to public carrier networks.
+- **Geographic Note**: The monitored villages live on 3 disconnected road subgraphs (Uttarakhand, Himachal Pradesh, and Kerala). Edges only exist within each region, so cross-region evacuation routing (e.g., VIL-013/014/015 to Uttarakhand) correctly returns "No safe evacuation route accessible". This is expected, not a bug.
 - **Offline / Demo Fallback**: When external services are unreachable, deterministic scenario datasets are utilized with explicit `CACHED` or `OFFLINE_DEMO` data-state labeling.
 
 

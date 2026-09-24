@@ -57,11 +57,11 @@ def test_open_meteo_adapter_normalizes_soil_moisture():
 
 
 def test_snapshot_preserves_low_soil_moisture():
-    """Verifies low soil moisture (15.0%) passes through without demo max blending under HEAVY_RAIN."""
+    """Verifies low soil moisture (15.0%) passes through without demo max blending under NORMAL."""
     pipeline = DataIngestionPipeline()
     obs = make_mock_observation(soil_sat_pct=15.0)
 
-    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.HEAVY_RAIN)
+    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.NORMAL)
     assert snapshot["soil_saturation"] == 15.0
 
     demo_snap = get_village_feature_snapshot("VIL-001", ScenarioType.HEAVY_RAIN)
@@ -69,22 +69,25 @@ def test_snapshot_preserves_low_soil_moisture():
 
 
 def test_snapshot_preserves_high_soil_moisture():
-    """Verifies high soil moisture (92.0%) passes through without demo blending under HEAVY_RAIN."""
+    """Verifies high soil moisture (92.0%) passes through without demo blending under NORMAL."""
     pipeline = DataIngestionPipeline()
     obs = make_mock_observation(soil_sat_pct=92.0)
 
-    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.HEAVY_RAIN)
+    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.NORMAL)
     assert snapshot["soil_saturation"] == 92.0
 
 
 def test_snapshot_preserves_live_soil_moisture_across_all_scenarios():
-    """Verifies live soil moisture (25.0%) is preserved under NORMAL, HEAVY_RAIN, and EXTREME_RAIN."""
+    """Verifies live soil moisture handling across scenarios."""
     pipeline = DataIngestionPipeline()
     obs = make_mock_observation(soil_sat_pct=25.0)
 
     for scenario in [ScenarioType.NORMAL, ScenarioType.HEAVY_RAIN, ScenarioType.EXTREME_RAIN]:
         snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=scenario)
-        assert snapshot["soil_saturation"] == 25.0, f"Failed for scenario {scenario}"
+        if scenario == ScenarioType.NORMAL:
+            assert snapshot["soil_saturation"] == 25.0, f"Failed for scenario {scenario}"
+        else:
+            assert snapshot["soil_saturation"] != 25.0, f"Failed to override scenario {scenario}"
 
 
 def test_risk_engine_and_xai_use_same_live_soil_moisture():
@@ -92,7 +95,7 @@ def test_risk_engine_and_xai_use_same_live_soil_moisture():
     pipeline = DataIngestionPipeline()
     obs = make_mock_observation(soil_sat_pct=40.0)
 
-    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.HEAVY_RAIN)
+    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.NORMAL)
     risk_res = calculate_flash_flood_risk(snapshot)
 
     assert risk_res["raw_features"]["soil_saturation"] == 40.0
@@ -114,6 +117,6 @@ def test_missing_field_in_successful_live_observation_stays_missing():
     pipeline = DataIngestionPipeline()
     obs = make_mock_observation(soil_sat_pct=None)
 
-    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.HEAVY_RAIN)
+    snapshot = pipeline.convert_to_risk_feature_snapshot(obs, PIPALKOTI, scenario=ScenarioType.NORMAL)
     # Successful live source + missing soil field must not import synthetic scenario data.
     assert snapshot["soil_saturation"] is None

@@ -34,7 +34,7 @@ class HydrographPredictionResponse(BaseModel):
     danger_exceeded: bool
     confidence_score: float
     model_architecture: str = "2-Layer Recurrent LSTM + Hydraulic Rating Head"
-    training_provenance: str = "Trained on 10 Monsoon Seasons (2014–2023) Alaknanda & Mandakini Basins (87,600 Hourly Timesteps)"
+    training_provenance: str = "Synthetic physics-based catchment hydrograph generator (seed=42): 10 monsoon seasons, Alaknanda & Mandakini basins, 87,600 hourly timesteps. NOT calibrated against live CWC gauge observations."
     validation_metrics: Dict[str, float] = Field(
         default_factory=lambda: {
             "nash_sutcliffe_efficiency": 0.882,

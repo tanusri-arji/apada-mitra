@@ -1,8 +1,10 @@
 """
 Vectorized Recurrent LSTM Hydrograph Prediction Engine for APADA MITRA (Feature 12).
 Executes high-frequency (< 1ms), edge-ready inference using calibrated weights
-trained on 10 monsoon seasons of Alaknanda and Mandakini catchment hydrographs.
-Evaluates 6-hour forward flood wave crests, peak arrival lead time, and CWC threshold exceedances.
+trained on a synthetic, physics-based (kinematic-wave + Horton infiltration) hydrograph generator
+with seed=42 (hydro_training_data.py). CWC real-time river telemetry is not wired (CWC/WIMS
+requires govt credentials); river baseline is modelled. NSE/R^2 are static constants
+evaluated on the synthetic validation set, not recomputed at runtime.
 """
 import os
 import json

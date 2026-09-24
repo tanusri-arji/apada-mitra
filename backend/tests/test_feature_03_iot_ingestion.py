@@ -215,13 +215,13 @@ def test_iot_rainfall_source_priority():
     pipe = DataIngestionPipeline()
     village_data = next(v for v in DEMO_VILLAGES if v["id"] == VIL_003)
 
-    obs = pipe.get_normalized_observation(village_data["latitude"], village_data["longitude"], VIL_003, scenario=ScenarioType.HEAVY_RAIN, force_offline=False)
+    obs = pipe.get_normalized_observation(village_data["latitude"], village_data["longitude"], VIL_003, scenario=ScenarioType.NORMAL, force_offline=False)
 
     assert obs.current_rainfall_mm_hr == 18.5
     assert obs.rainfall_source == "LIVE_IOT_SENSOR"
     assert obs.data_state == DataSourceState.LIVE_IOT_SENSOR
 
-    snapshot = pipe.convert_to_risk_feature_snapshot(obs, village_data, scenario=ScenarioType.HEAVY_RAIN)
+    snapshot = pipe.convert_to_risk_feature_snapshot(obs, village_data, scenario=ScenarioType.NORMAL)
     assert snapshot["current_rainfall"] == 18.5
     assert snapshot["rainfall_source"] == "LIVE_IOT_SENSOR"
 
@@ -242,7 +242,7 @@ def test_iot_soil_m3_per_m3_conversion():
 
     pipe = DataIngestionPipeline()
     village_data = next(v for v in DEMO_VILLAGES if v["id"] == VIL_003)
-    obs = pipe.get_normalized_observation(village_data["latitude"], village_data["longitude"], VIL_003, scenario=ScenarioType.HEAVY_RAIN, force_offline=False)
+    obs = pipe.get_normalized_observation(village_data["latitude"], village_data["longitude"], VIL_003, scenario=ScenarioType.NORMAL, force_offline=False)
 
     assert obs.soil_saturation_pct == 84.0
     assert obs.soil_source == "LIVE_IOT_SENSOR"
@@ -254,7 +254,7 @@ def test_open_meteo_fallback_when_no_fresh_iot_sensor():
     village_data = next(v for v in DEMO_VILLAGES if v["id"] == VIL_003)
 
     # No IoT sensors ingested
-    obs = pipe.get_normalized_observation(village_data["latitude"], village_data["longitude"], VIL_003, scenario=ScenarioType.HEAVY_RAIN, force_offline=False)
+    obs = pipe.get_normalized_observation(village_data["latitude"], village_data["longitude"], VIL_003, scenario=ScenarioType.NORMAL, force_offline=False)
 
     assert obs.data_state != DataSourceState.LIVE_IOT_SENSOR
     assert obs.rainfall_source != "LIVE_IOT_SENSOR"

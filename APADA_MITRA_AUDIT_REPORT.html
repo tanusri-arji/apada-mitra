@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>APADA MITRA FINAL AUDIT REPORT</title>
+<style>
+    body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px;
+    }
+    h1, h2, h3 { color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px; }
+    table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 14px; page-break-inside: auto; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f8f9fa; font-weight: bold; }
+    tr { page-break-inside: avoid; page-break-after: auto; }
+    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: monospace; }
+    @media print {
+        body { max-width: 100%; padding: 0; }
+        a { text-decoration: none; color: black; }
+        .page-break { page-break-before: always; }
+    }
+</style>
+</head>
+<body>
+<div style="text-align: center; margin-bottom: 50px;">
+    <h1 style="border: none;">APADA MITRA</h1>
+    <h2 style="border: none; margin-top: 0;">Final Project Audit Report</h2>
+    <p>Generated based on complete codebase forensics.</p>
+    <p><em>Confidential Internal Audit</em></p>
+</div>
+<h1>APADA MITRA — COMPLETE FORENSIC AUDIT REPORT</h1>
+<p><strong>SIH26192 | Flash Flood Prediction System for Hilly Regions</strong>
+<strong>Audit Date:</strong> 2026-09-16 | Codebase: <code>c:\Users\Tanusri\Downloads\sih 2\sih 2</code></p>
+<blockquote>
+<p><strong>METHODOLOGY:</strong> Every finding is traced to a specific file and line. Nothing is assumed from filenames alone. All statuses are derived from actual code inspection and live test execution.</p>
+</blockquote>
+<hr />
+<h2>PART 1 — PROJECT INVENTORY</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Backend Python source files (app/)</td>
+<td>~60</td>
+</tr>
+<tr>
+<td>Backend test files</td>
+<td>22</td>
+</tr>
+<tr>
+<td>Frontend TypeScript/TSX files</td>
+<td>~35</td>
+</tr>
+<tr>
+<td>Data files (JSON + Python static)</td>
+<td>8</td>
+</tr>
+<tr>
+<td>ML model weight files</td>
+<td>1 (<code>flood_lstm_weights.json</code>, 463 KB)</td>
+</tr>
+<tr>
+<td>Documentation files (docs/)</td>
+<td>44</td>
+</tr>
+<tr>
+<td>Deployment config</td>
+<td>1 (<code>frontend/vercel.json</code>)</td>
+</tr>
+<tr>
+<td>Environment files</td>
+<td>1 (<code>backend/.env</code>) — ⚠️ SECRETS INSIDE</td>
+</tr>
+<tr>
+<td>Dead backup scripts</td>
+<td>3 (<code>restore_imd_cap_adapter.py</code>, etc.)</td>
+</tr>
+<tr>
+<td>Legacy folder</td>
+<td><code>frontend/src_backup_redesign/</code> — UNUSED</td>
+</tr>
+</tbody>
+</table>
+<h3>Core Architecture</h3>
+<pre><code>External APIs → Adapters → data_pipeline.py → Engines → routes.py → React 18 frontend
+
+Adapters:
+  open_meteo.py      LIVE (NORMAL scenario only) — rainfall, soil
+  cwc_adapter.py     SKELETON — always returns None
+  imd_cap_adapter.py LIVE (CAP RSS feed, 5-min cache)
+  open_elevation.py  LIVE attempt (Copernicus DEM), fallback to static
+  offline_demo.py    Deterministic fallback for all other scenarios
+
+Engines (all formula-based unless stated):
+  risk_engine.py           6-factor flood risk (WEIGHTED FORMULA)
+  landslide_engine.py      5-factor landslide risk (WEIGHTED FORMULA)
+  priority_engine.py       4-factor evacuation priority
+  routing_engine.py        Dijkstra over 24-segment static road graph
+  shelter_suitability_engine.py   Shelter scoring (63 candidates)
+  simulation_engine.py     What-If (no global state mutation)
+  hydro_lstm_engine.py     2-Layer LSTM, NumPy inference (ML — only ML component)
+  alert_engine.py          Threshold-based multilingual alerts
+  exposure_engine.py       Population exposure calculation
+</code></pre>
+<hr />
+<h2>PART 2 — TECHNOLOGY STACK</h2>
+<h3>Frontend (from <code>frontend/package.json</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Tech</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>React 18</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>TypeScript 5.3</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>Vite 5</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>Tailwind CSS 3.4</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>Leaflet 1.9 / react-leaflet 4.2</td>
+<td>USED (primary map)</td>
+</tr>
+<tr>
+<td>MapLibre GL 6.7</td>
+<td>In package.json; <code>GeospatialMonitoringMap.tsx</code> = 82 bytes, stub only</td>
+</tr>
+<tr>
+<td>lucide-react</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>Redux / Zustand</td>
+<td>NOT USED</td>
+</tr>
+<tr>
+<td>React Query / SWR</td>
+<td>NOT USED — manual fetch via <code>api/client.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Backend (from <code>backend/requirements.txt</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Tech</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python 3.10+</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>Uvicorn</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>Pydantic v2</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>NumPy 1.26+</td>
+<td>USED at runtime (LSTM inference)</td>
+</tr>
+<tr>
+<td>pandas 2.2+</td>
+<td>Training script only — NOT at runtime</td>
+</tr>
+<tr>
+<td>python-dotenv</td>
+<td>USED</td>
+</tr>
+<tr>
+<td>Any SQL/ORM</td>
+<td>CONFIRMED ABSENT</td>
+</tr>
+<tr>
+<td>PyTorch</td>
+<td>Training script only — NOT at runtime</td>
+</tr>
+</tbody>
+</table>
+<h3>Infrastructure</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vercel (frontend)</td>
+<td>CONFIGURED — <code>vercel.json</code> confirmed</td>
+</tr>
+<tr>
+<td>Render (backend)</td>
+<td>README claim only — no <code>render.yaml</code> found</td>
+</tr>
+<tr>
+<td>AWS EC2 / RDS / S3</td>
+<td>NOT FOUND anywhere in codebase</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>NOT FOUND — no Dockerfile</td>
+</tr>
+<tr>
+<td>GitHub Actions / Jenkins</td>
+<td>NOT FOUND</td>
+</tr>
+<tr>
+<td>Any database</td>
+<td>CONFIRMED ABSENT</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>PART 3 — COMPLETE DATA AUDIT (per source)</h2>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Provider</th>
+<th>File</th>
+<th>Live?</th>
+<th>Scenario</th>
+<th>Fallback</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current rainfall</td>
+<td>Open-Meteo API</td>
+<td><code>adapters/open_meteo.py</code></td>
+<td>YES — NORMAL only</td>
+<td>NORMAL</td>
+<td>wttr.in → OFFLINE_DEMO</td>
+</tr>
+<tr>
+<td>24h forecast rainfall</td>
+<td>Open-Meteo API</td>
+<td><code>adapters/open_meteo.py</code></td>
+<td>YES — NORMAL only</td>
+<td>NORMAL</td>
+<td>OFFLINE_DEMO</td>
+</tr>
+<tr>
+<td>Soil saturation</td>
+<td>Open-Meteo (soil_moisture_0_to_7cm)</td>
+<td><code>adapters/open_meteo.py</code></td>
+<td>YES — NORMAL only</td>
+<td>NORMAL</td>
+<td>OFFLINE_DEMO</td>
+</tr>
+<tr>
+<td>River water level</td>
+<td>CWC/WIMS — no credentials</td>
+<td><code>adapters/cwc_adapter.py</code></td>
+<td><strong>NEVER — always None</strong></td>
+<td>All</td>
+<td>Demo baseline</td>
+</tr>
+<tr>
+<td>DEM elevation/terrain</td>
+<td>Open-Meteo Elevation (Copernicus GLO-90)</td>
+<td><code>adapters/open_elevation.py</code></td>
+<td>Attempted (3.5s timeout)</td>
+<td>All</td>
+<td>Static village data</td>
+</tr>
+<tr>
+<td>Slope</td>
+<td>Derived via Horn gradient from DEM</td>
+<td><code>adapters/open_elevation.py</code></td>
+<td>Derived</td>
+<td>All</td>
+<td>Static village</td>
+</tr>
+<tr>
+<td>Flow accumulation</td>
+<td>Derived via D8 from DEM</td>
+<td><code>adapters/open_elevation.py</code></td>
+<td>Derived</td>
+<td>All</td>
+<td>Static village</td>
+</tr>
+<tr>
+<td>Historical landslides</td>
+<td>GSI/ISRO NRSC Atlas — 15 events</td>
+<td><code>data/isro_gsi_landslides.json</code></td>
+<td><strong>NO — STATIC</strong></td>
+<td>Context</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Village parameters</td>
+<td>Developer-constructed</td>
+<td><code>data/dataset.py</code></td>
+<td><strong>NO — SYNTHETIC</strong></td>
+<td>All</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Population</td>
+<td>Census of India 2011 DCHB</td>
+<td><code>data/census_population_data.py</code></td>
+<td><strong>NO — STATIC 2011</strong></td>
+<td>Exposure</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Infrastructure counts</td>
+<td>Developer-defined</td>
+<td><code>data/dataset.py</code></td>
+<td><strong>NO — SYNTHETIC</strong></td>
+<td>Priority</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Roads</td>
+<td>Developer-defined (OSM-inspired names)</td>
+<td><code>data/road_network.py</code></td>
+<td><strong>NO — SYNTHETIC</strong></td>
+<td>Routing</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Road conditions</td>
+<td>Computed from hazard scores</td>
+<td><code>data/road_network.py</code> L226–274</td>
+<td><strong>LOCALLY DERIVED</strong></td>
+<td>All</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Shelters</td>
+<td>USDMA/DDMP docs (63 candidates)</td>
+<td><code>adapters/shelter_adapter.py</code></td>
+<td><strong>NO — STATIC</strong></td>
+<td>Shelter</td>
+<td>—</td>
+</tr>
+<tr>
+<td>IoT sensors</td>
+<td>In-memory (no real devices)</td>
+<td><code>engine/iot_store.py</code></td>
+<td><strong>EMPTY AT STARTUP</strong></td>
+<td>All</td>
+<td>—</td>
+</tr>
+<tr>
+<td>IMD/NDMA alerts</td>
+<td>CAP RSS feed (S3-hosted)</td>
+<td><code>adapters/imd_cap_adapter.py</code></td>
+<td>YES (attempted, 4s TTL)</td>
+<td>All</td>
+<td>Empty list</td>
+</tr>
+<tr>
+<td>Alert delivery (SMS/WhatsApp)</td>
+<td>SimulationNotificationProvider</td>
+<td><code>adapters/notification_provider.py</code></td>
+<td><strong>SIMULATION ONLY</strong></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Telegram</td>
+<td>Telegram Bot API</td>
+<td><code>send_telegram_alert.py</code></td>
+<td>YES (standalone script)</td>
+<td>Manual</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Hydrograph stages</td>
+<td>LSTM inference</td>
+<td><code>engine/hydro_lstm_engine.py</code></td>
+<td><strong>LOCALLY DERIVED</strong></td>
+<td>ML view</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>KEY DESIGN FACT (<code>data_pipeline.py</code> L146):</strong>
+<code>scenario_forces_offline = (scenario != ScenarioType.NORMAL)</code>
+For HEAVY_RAIN and EXTREME_RAIN, ALL met inputs come from the SYNTHETIC demo dataset.
+Open-Meteo is NOT called for scenario demonstrations.</p>
+</blockquote>
+<hr />
+<h2>PART 4 — LIVE vs STATIC vs SIMULATED (NORMAL scenario, right now)</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Classification</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Current rainfall</td>
+<td>LIVE or OFFLINE_DEMO</td>
+<td><code>open_meteo.py</code>, <code>data_pipeline.py</code> L146</td>
+</tr>
+<tr>
+<td>Soil saturation</td>
+<td>LIVE (NWP model-derived) or OFFLINE_DEMO</td>
+<td>NOT a physical soil probe</td>
+</tr>
+<tr>
+<td>River level</td>
+<td>DEMO BASELINE</td>
+<td><code>cwc_adapter.py</code> L41-43: always <code>None</code></td>
+</tr>
+<tr>
+<td>Flood risk score</td>
+<td>LOCALLY DERIVED — weighted formula</td>
+<td><code>risk_engine.py</code></td>
+</tr>
+<tr>
+<td>Landslide risk score</td>
+<td>LOCALLY DERIVED — weighted formula</td>
+<td><code>landslide_engine.py</code></td>
+</tr>
+<tr>
+<td>Evacuation priority</td>
+<td>LOCALLY DERIVED</td>
+<td><code>priority_engine.py</code></td>
+</tr>
+<tr>
+<td>Road conditions</td>
+<td>LOCALLY DERIVED from risk</td>
+<td><code>road_network.py</code> L226-274</td>
+</tr>
+<tr>
+<td>Shelter capacity</td>
+<td>STATIC (govt DDMP, many UNKNOWN)</td>
+<td><code>shelter_adapter.py</code></td>
+</tr>
+<tr>
+<td>IoT readings</td>
+<td>NONE</td>
+<td><code>iot_store.py</code> L32</td>
+</tr>
+<tr>
+<td>IMD alerts</td>
+<td>LIVE (CAP feed) or EMPTY</td>
+<td><code>imd_cap_adapter.py</code> L25</td>
+</tr>
+<tr>
+<td>Hydrograph</td>
+<td>LOCALLY DERIVED (LSTM)</td>
+<td><code>hydro_lstm_engine.py</code></td>
+</tr>
+<tr>
+<td>Route</td>
+<td>LOCALLY DERIVED (Dijkstra)</td>
+<td><code>routing_engine.py</code></td>
+</tr>
+<tr>
+<td>Shelter recommendation</td>
+<td>LOCALLY DERIVED (scoring)</td>
+<td><code>shelter_suitability_engine.py</code></td>
+</tr>
+<tr>
+<td>What-If output</td>
+<td>LOCALLY DERIVED (no state mutation)</td>
+<td><code>simulation_engine.py</code></td>
+</tr>
+<tr>
+<td>SMS delivery</td>
+<td>SIMULATION ONLY</td>
+<td><code>notification_provider.py</code> L80</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>PART 5 — ENGINE FORMULA AUDIT</h2>
+<h3>Flood Risk Engine (<code>risk_engine.py</code>)</h3>
+<pre><code>Weights (sum = 1.00 ✅):
+  current_rainfall     = 0.25  (bound: 100 mm/h)
+  forecast_rainfall    = 0.20  (bound: 250 mm)
+  soil_saturation      = 0.15  (bound: 100%)
+  river_water_level    = 0.15  (norm: (val-1.0)/2.0)
+  flow_accumulation    = 0.15  (bound: 5.0 log scale)
+  slope                = 0.10  (bound: 45 degrees)
+
+Missing feature fill: 0.3 neutral (NOT 0.0)
+risk_score = clamp(weighted_sum × 100, 0.0, 100.0)
+confidence = clamp(95.0 − missing_weight_sum × 80.0, 10.0, 100.0)
+</code></pre>
+<h3>Landslide Engine (<code>landslide_engine.py</code>)</h3>
+<pre><code>Classification: RULE-BASED WEIGHTED SCORING — NOT ML
+
+Weights (sum = 1.00 ✅):
+  slope            = 0.35
+  soil_saturation  = 0.25
+  current_rainfall = 0.20
+  forecast_rainfall= 0.15
+  river_water_level= 0.05
+
+Historical events from isro_gsi_landslides.json = CONTEXT NARRATIVE ONLY
+(does NOT influence the numeric score)
+</code></pre>
+<h3>Priority Engine (<code>priority_engine.py</code>)</h3>
+<pre><code>flood_pts      = flood_risk_score × 0.35
+landslide_pts  = landslide_risk_score × 0.25
+pop_norm       = clamp(population_exposed / 3500.0, 0.0, 1.0)
+pop_pts        = pop_norm × 100 × 0.25
+infra_norm     = clamp(critical_structures_count / 10.0, 0.0, 1.0)
+infra_pts      = infra_norm × 100 × 0.15
+priority_score = clamp(sum, 0.0, 100.0)
+Rank 1 = highest priority_score
+</code></pre>
+<h3>Routing Engine (<code>routing_engine.py</code>)</h3>
+<pre><code>Graph: 24 road segments, UNDIRECTED, 3 disconnected subgraphs
+  (Uttarakhand, Himachal Pradesh, Kerala — no cross-region roads)
+BLOCKED / hazard ≥ 85% roads: excluded entirely
+Edge cost = distance_km × (1 + hazard_max/40) × (2.5 if DEGRADED else 1.0)
+Safety score = clamp(100 − max_hazard × 0.85, 5.0, 100.0)
+Speed = 25 km/h (safety&gt;60) or 18 km/h
+No route → ValueError → HTTP error
+</code></pre>
+<hr />
+<h2>PART 6 — DATASET STATISTICS</h2>
+<table>
+<thead>
+<tr>
+<th>Dataset</th>
+<th>Count</th>
+<th>Source</th>
+<th>Classification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Villages</td>
+<td>15</td>
+<td>dataset.py</td>
+<td>SYNTHETIC (locations real, parameters synthetic)</td>
+</tr>
+<tr>
+<td>Roads</td>
+<td>24 segments</td>
+<td>road_network.py</td>
+<td>SYNTHETIC (self-labeled)</td>
+</tr>
+<tr>
+<td>Shelter candidates</td>
+<td>63</td>
+<td>shelter_adapter.py</td>
+<td>STATIC govt DDMP docs</td>
+</tr>
+<tr>
+<td>Historical landslides</td>
+<td>15 events (2012–2023)</td>
+<td>isro_gsi_landslides.json</td>
+<td>REAL (GSI/ISRO sourced)</td>
+</tr>
+<tr>
+<td>CWC stations</td>
+<td>8 registered</td>
+<td>hydrology_engine.py</td>
+<td>INTERFACE ONLY — 0 live</td>
+</tr>
+<tr>
+<td>IoT sensors active</td>
+<td>0 at startup</td>
+<td>iot_store.py</td>
+<td>Empty store</td>
+</tr>
+<tr>
+<td>LSTM training hours</td>
+<td>87,600</td>
+<td>hydro_training_data.py</td>
+<td>SYNTHETIC (seed=42)</td>
+</tr>
+<tr>
+<td>API endpoints</td>
+<td>~35</td>
+<td>routes.py + ml_routes.py</td>
+<td>Implemented</td>
+</tr>
+<tr>
+<td>Tests</td>
+<td>218 collected</td>
+<td>pytest</td>
+<td><strong>206 pass, 12 FAIL</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total monitored population (Census 2011):</strong> 37,581 residents across 15 villages</p>
+<hr />
+<h2>PART 7 — GIS / COORDINATE AUDIT</h2>
+<table>
+<thead>
+<tr>
+<th>Village</th>
+<th>Name</th>
+<th>Lat</th>
+<th>Lon</th>
+<th>State</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VIL-001</td>
+<td>Pipalkoti</td>
+<td>30.43</td>
+<td>79.43</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-002</td>
+<td>Helang</td>
+<td>30.52</td>
+<td>79.51</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-003</td>
+<td>Govindghat</td>
+<td>30.62</td>
+<td>79.56</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-004</td>
+<td>Badrinath Base</td>
+<td>30.74</td>
+<td>79.49</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-005</td>
+<td>Karnaprayag</td>
+<td>30.26</td>
+<td>79.22</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-006</td>
+<td>Nandaprayag</td>
+<td>30.33</td>
+<td>79.32</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-007</td>
+<td>Rudraprayag Sangam</td>
+<td>30.285</td>
+<td>78.98</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-008</td>
+<td>Tilwara</td>
+<td>30.35</td>
+<td>79.03</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-009</td>
+<td>Augustmuni</td>
+<td>30.39</td>
+<td>79.08</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-010</td>
+<td>Guptkashi</td>
+<td>30.525</td>
+<td>79.08</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-011</td>
+<td>Phata</td>
+<td>30.57</td>
+<td>79.05</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-012</td>
+<td>Sonprayag</td>
+<td>30.63</td>
+<td>79.01</td>
+<td>Uttarakhand</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-013</td>
+<td>Aut / Mandi</td>
+<td>31.74</td>
+<td>77.16</td>
+<td>Himachal Pradesh</td>
+<td>✅ Plausible</td>
+</tr>
+<tr>
+<td>VIL-014</td>
+<td>Meppadi</td>
+<td>11.55</td>
+<td>76.12</td>
+<td>Kerala</td>
+<td>⚠️ ~3 km offset from actual</td>
+</tr>
+<tr>
+<td>VIL-015</td>
+<td>Chooralmala</td>
+<td>11.51</td>
+<td>76.17</td>
+<td>Kerala</td>
+<td>✅ Plausible</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>CRITICAL:</strong> Three disconnected geographic subgraphs. No roads connect Uttarakhand ↔ HP ↔ Kerala. Cross-region routing always fails with "No safe route" error. Correct behavior but must be known before demo.</p>
+</blockquote>
+<hr />
+<h2>PART 8 — ML / HYDROGRAPH AUDIT</h2>
+<h3>Architecture</h3>
+<ul>
+<li><strong>2-Layer LSTM</strong> (hidden_size=32) + FC output layer (6 steps)</li>
+<li><strong>Runtime: pure NumPy</strong> (no PyTorch dependency at inference)</li>
+<li><strong>Weights:</strong> <code>data/weights/flood_lstm_weights.json</code> (463 KB) — committed to repo</li>
+</ul>
+<h3>Training Data</h3>
+<p>Generated by <code>data/hydro_training_data.py.generate_catchment_hydrograph_series(num_hours=87600, seed=42)</code>
+- <strong>100% SYNTHETIC</strong> — physics-based (monsoon envelope + gamma storm arrivals + Horton infiltration + kinematic wave routing)
+- <strong>NOT real CWC measured river stage data</strong></p>
+<h3>Performance Metrics</h3>
+<pre><code class="language-python"># ml_models.py lines 39-44 — HARDCODED Pydantic defaults from training run:
+&quot;nash_sutcliffe_efficiency&quot;: 0.882
+&quot;coefficient_of_determination_r2&quot;: 0.914
+&quot;root_mean_squared_error_m&quot;: 0.142
+&quot;peak_crest_timing_error_hours&quot;: 0.42
+</code></pre>
+<p>These are hardcoded constants computed against <strong>synthetic validation data</strong>, NOT real gauge validation.
+They are NOT recalculated at runtime.</p>
+<h3>Hardcoded Post-LSTM Additions</h3>
+<pre><code class="language-python">kinematic_wave_profile = [0.35, 0.82, 1.00, 0.86, 0.62, 0.42]  # surge shape
+initial_stage_m = 2.2 + upstream_offset + (precip × 0.035)       # not from CWC
+</code></pre>
+<hr />
+<h2>PART 9 — IoT / ALERT / NOTIFICATION AUDIT</h2>
+<h3>IoT Store (<code>iot_store.py</code>)</h3>
+<ul>
+<li>Type: In-memory Python dict — no persistence</li>
+<li>Startup: <strong>EMPTY</strong> — <code>self._sensors: Dict[str, IoTSensorRecord] = {}</code></li>
+<li>Auth on <code>/api/iot/ingest</code>: <strong>NONE</strong> — open endpoint (security risk)</li>
+<li>Freshness: LIVE ≤600s | STALE ≤1800s | OFFLINE &gt;1800s</li>
+<li><strong>No physical sensors connected</strong></li>
+</ul>
+<h3>Alert Engine (<code>alert_engine.py</code> + <code>notification_provider.py</code>)</h3>
+<ul>
+<li>Alerts generated automatically from risk score thresholds</li>
+<li>5 languages: EN, HI, Garhwali, Kumaoni, Nepali — <strong>template-based, NOT machine translation</strong></li>
+<li>Delivery provider: <code>SimulationNotificationProvider</code></li>
+<li><code>DeliveryStatus.NOT_DELIVERED</code></li>
+<li><code>DeliveryMode.SIMULATION</code></li>
+<li>SMS: <code>"SIMULATION_ONLY"</code></li>
+<li>WhatsApp: <code>"EXTERNAL_PROVIDER_UNAVAILABLE"</code></li>
+</ul>
+<h3>Telegram (<code>send_telegram_alert.py</code>)</h3>
+<ul>
+<li><strong>STANDALONE SCRIPT</strong> — NOT connected to main app runtime</li>
+<li>Sends a single hardcoded test message</li>
+<li>Token hardcoded as fallback in line 8: <code>8930236949:AAF4IO2am0V31BonD-bciYLuQHJCdK02NXc</code></li>
+<li>App does NOT auto-dispatch Telegram on alert generation</li>
+</ul>
+<hr />
+<h2>PART 10 — SECURITY AUDIT</h2>
+<table>
+<thead>
+<tr>
+<th>Finding</th>
+<th>Severity</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Telegram Bot token hardcoded in <code>.env</code> AND <code>send_telegram_alert.py</code> L8</td>
+<td><strong>HIGH</strong></td>
+<td><code>TELEGRAM_BOT_TOKEN=8930236949:AAF...</code></td>
+</tr>
+<tr>
+<td><code>.env</code> committed to git repository</td>
+<td><strong>HIGH</strong></td>
+<td>File present at <code>backend/.env</code></td>
+</tr>
+<tr>
+<td><code>/api/iot/ingest</code> unauthenticated</td>
+<td>MEDIUM</td>
+<td>Anyone can inject false sensor readings</td>
+</tr>
+<tr>
+<td>No rate limiting on API</td>
+<td>MEDIUM</td>
+<td>No throttling middleware</td>
+</tr>
+<tr>
+<td>No SQL injection risk</td>
+<td>N/A</td>
+<td>No SQL queries anywhere</td>
+</tr>
+<tr>
+<td>No secrets in frontend</td>
+<td>✅ Clean</td>
+<td><code>client.ts</code> only uses relative <code>/api</code> paths</td>
+</tr>
+<tr>
+<td>Debug mode</td>
+<td>✅ Not detected</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>PART 11 — DATABASE AUDIT</h2>
+<p><strong>Finding: NO DATABASE OF ANY KIND EXISTS.</strong></p>
+<p><code>requirements.txt</code> contains: <code>fastapi</code>, <code>uvicorn</code>, <code>pydantic</code>, <code>pytest</code>, <code>httpx</code>, <code>pandas</code>, <code>numpy</code> — zero database drivers.
+No SQL queries. No ORM. No connection strings. No migration files.
+All data: Python in-memory structures + static JSON/Python files.</p>
+<hr />
+<h2>PART 12 — TESTING AUDIT (ACTUAL EXECUTION)</h2>
+<p><strong>Command:</strong> <code>python -m pytest tests/ --tb=no -q</code>
+<strong>Result: <code>12 failed, 206 passed, 2 warnings in 13.02s</code></strong></p>
+<h3>Failed Tests</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>#</th>
+<th>Root Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_data_adapters.py::test_pipeline_risk_snapshot_translation</code></td>
+<td>1</td>
+<td>Design change: HEAVY_RAIN now forces offline</td>
+</tr>
+<tr>
+<td><code>test_feature_01_real_rainfall.py</code></td>
+<td>5</td>
+<td>Tests expect live rainfall in HEAVY_RAIN; code uses synthetic</td>
+</tr>
+<tr>
+<td><code>test_feature_02_real_soil_moisture.py</code></td>
+<td>5</td>
+<td>Same root cause</td>
+</tr>
+<tr>
+<td><code>test_feature_03_iot_ingestion.py::test_iot_rainfall_source_priority</code></td>
+<td>1</td>
+<td>IoT priority logic changed with offline redesign</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>README claims "218 Passing" — THIS IS FACTUALLY INCORRECT.</strong>
+Actual verified count: <strong>206 passing, 12 failing.</strong></p>
+</blockquote>
+<h3>Passing Coverage</h3>
+<p>Risk engine ✅ | Landslide ✅ | Priority ✅ | Dijkstra ✅ | Shelter ✅ | What-If ✅ | Hydrology ✅ | LSTM ML ✅ | Alerts ✅ | IMD CAP ✅ | Geospatial ✅</p>
+<hr />
+<h2>PART 13 — DOCUMENTATION CONTRADICTIONS</h2>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Finding</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"218 Passing tests"</td>
+<td>206 passing, 12 failing</td>
+<td>❌ CONTRADICTED</td>
+</tr>
+<tr>
+<td>"63 shelter candidate network" (L49)</td>
+<td>63 entries confirmed</td>
+<td>✅ CORRECT</td>
+</tr>
+<tr>
+<td>"33 shelter candidate network" (L121)</td>
+<td>Same file has 63 entries</td>
+<td>❌ INTERNAL CONTRADICTION</td>
+</tr>
+<tr>
+<td>"AWS-based"</td>
+<td>No AWS code or config</td>
+<td>❌ NOT FOUND</td>
+</tr>
+<tr>
+<td>"RDS database"</td>
+<td>No database at all</td>
+<td>❌ NOT FOUND</td>
+</tr>
+<tr>
+<td>"live data"</td>
+<td>Only Open-Meteo for NORMAL scenario</td>
+<td>⚠️ PARTIAL</td>
+</tr>
+<tr>
+<td>"AI-powered"</td>
+<td>LSTM for hydrograph; risk = formula</td>
+<td>⚠️ PARTIAL</td>
+</tr>
+<tr>
+<td>"CWC integration"</td>
+<td>Adapter always returns None</td>
+<td>⚠️ INTERFACE ONLY</td>
+</tr>
+<tr>
+<td>"Telegram emergency dispatch"</td>
+<td>Standalone script, not app-integrated</td>
+<td>⚠️ PARTIAL</td>
+</tr>
+<tr>
+<td>"NSE 0.882, R² 0.914"</td>
+<td>Hardcoded, synthetic validation only</td>
+<td>⚠️ NEEDS QUALIFICATION</td>
+</tr>
+<tr>
+<td>"Dijkstra routing"</td>
+<td>Correctly implemented</td>
+<td>✅ SUPPORTED</td>
+</tr>
+<tr>
+<td>"5 languages"</td>
+<td>Templates confirmed</td>
+<td>✅ SUPPORTED</td>
+</tr>
+<tr>
+<td>"87,600 timesteps / 10 seasons"</td>
+<td><code>num_hours=87600, seed=42</code> confirmed</td>
+<td>✅ SUPPORTED (synthetic)</td>
+</tr>
+<tr>
+<td>"SMS alerts"</td>
+<td>SIMULATION_ONLY, NOT_DELIVERED</td>
+<td>❌ NOT DELIVERED</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>PART 14 — JUDGE Q&amp;A (Verified Answers with Evidence)</h2>
+<p><strong>Q1: Where does rainfall come from?</strong>
+For NORMAL (baseline): Open-Meteo public REST API (free, no key). For HEAVY_RAIN/EXTREME_RAIN demo scenarios: pre-defined synthetic parameters. <code>[data_pipeline.py L146]</code></p>
+<p><strong>Q2: Is it real-time?</strong>
+NORMAL scenario: yes, Open-Meteo (3-hour cache). Scenario demonstrations: no — reproducible synthetic values. <code>[open_meteo.py, data_pipeline.py]</code></p>
+<p><strong>Q3: Do you have CWC river level data?</strong>
+No. CWC/WIMS requires authorized government credentials. Interface exists (8 CWC stations registered), adapter always returns None, falls back to demo baseline. <code>[cwc_adapter.py L41-43]</code></p>
+<p><strong>Q4: Are IoT sensors deployed?</strong>
+No physical hardware. Complete IoT ingestion API exists (<code>POST /api/iot/ingest</code>): validates, stores, and prioritizes sensor readings with freshness tracking. Architecture ready for deployment. <code>[iot_store.py]</code></p>
+<p><strong>Q5: Is the prediction ML?</strong>
+Hydrograph prediction: yes — real 2-layer LSTM, NumPy inference, 463 KB trained weights. Flood/landslide risk scores: NO — transparent 6-factor/5-factor weighted formulas. <code>[hydro_lstm_engine.py, risk_engine.py]</code></p>
+<p><strong>Q6: What is the model accuracy?</strong>
+NSE=0.882, R²=0.914, RMSE=0.142m — computed against SYNTHETIC validation data (physics-based simulation). Not validated against real CWC gauge observations (unavailable publicly). <code>[ml_models.py L38-44]</code></p>
+<p><strong>Q7: Are roads live / real-time?</strong>
+No. Topology is synthetic (OSM-inspired names). Road conditions (OPEN/DEGRADED/BLOCKED) are derived at runtime from hazard scores — not from live road closure feeds. <code>[road_network.py L1-5, L226-274]</code></p>
+<p><strong>Q8: Are you sending SMS?</strong>
+No. <code>SimulationNotificationProvider</code> returns <code>NOT_DELIVERED / SIMULATION</code>. No SMS gateway connected. Telegram is a standalone demo script, not auto-triggered by the app. <code>[notification_provider.py L74-90]</code></p>
+<p><strong>Q9: Is this on AWS / RDS?</strong>
+No AWS code or config exists. Frontend: Vercel (vercel.json confirmed). Backend: Render (documentation claim, no render.yaml in repo). <code>[requirements.txt — no boto3, no psycopg2]</code></p>
+<p><strong>Q10: Why 12 tests failing if README says 218?</strong>
+A design change forced HEAVY_RAIN/EXTREME_RAIN scenarios to use synthetic offline data, but 12 feature tests that expected live API values in those scenarios were not updated. Correct count: 206 passing, 12 failing.</p>
+<p><strong>Q11: Are shelters real?</strong>
+Names and locations derived from publicly documented USDMA/DDMP Chamoli, Rudraprayag, HPSDMA Mandi, KSDMA Wayanad government facilities. Static snapshot — not live occupancy. Many capacities are UNKNOWN (explicitly marked). <code>[shelter_adapter.py]</code></p>
+<p><strong>Q12: What if a route is completely blocked?</strong>
+<code>ValueError("No safe evacuation route accessible")</code> → HTTP error response to frontend. <code>[routing_engine.py L123-126]</code></p>
+<p><strong>Q13: Why Dijkstra not A*?</strong>
+24-edge graph — Dijkstra is trivially fast. No domain-specific admissible heuristic for hazard-weighted cost exists. Transparent and explainable.</p>
+<p><strong>Q14: What is soil saturation?</strong>
+Derived from Open-Meteo <code>soil_moisture_0_to_7cm</code> NWP model field — not a physical in-situ soil moisture probe.</p>
+<p><strong>Q15: What happens on API failure?</strong>
+Open-Meteo down → wttr.in → OFFLINE_DEMO. IMD CAP down → empty alert list. All labeled with data provenance: LIVE / CACHED / OFFLINE_DEMO / REAL_STATIC.</p>
+<hr />
+<h2>PART 15 — FINAL TRUTH TABLE</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Real External</th>
+<th>Static</th>
+<th>Synthetic</th>
+<th>Derived Locally</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rainfall (NORMAL)</td>
+<td>✅ Open-Meteo</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Rainfall (HEAVY/EXTREME)</td>
+<td></td>
+<td></td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>Soil moisture</td>
+<td>✅ Open-Meteo NWP</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>River level</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Demo baseline</td>
+</tr>
+<tr>
+<td>DEM elevation</td>
+<td>✅ Attempted Copernicus</td>
+<td>✅ fallback</td>
+<td></td>
+<td>✅ derived</td>
+</tr>
+<tr>
+<td>Population</td>
+<td>✅ Census 2011</td>
+<td>✅</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Historical landslides</td>
+<td>✅ GSI/ISRO</td>
+<td>✅</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Village parameters</td>
+<td></td>
+<td></td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>Roads</td>
+<td></td>
+<td></td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>Road conditions</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Formula</td>
+</tr>
+<tr>
+<td>Shelters</td>
+<td>✅ Govt DDMP</td>
+<td>✅</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>IMD alerts</td>
+<td>✅ CAP feed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Flood risk score</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Formula</td>
+</tr>
+<tr>
+<td>Landslide score</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Formula</td>
+</tr>
+<tr>
+<td>Priority rank</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Formula</td>
+</tr>
+<tr>
+<td>Route</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Dijkstra</td>
+</tr>
+<tr>
+<td>Shelter recommendation</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Scoring</td>
+</tr>
+<tr>
+<td>Hydrograph</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ LSTM (synthetic-trained)</td>
+</tr>
+<tr>
+<td>What-If cascade</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Local recalc</td>
+</tr>
+<tr>
+<td>SMS delivery</td>
+<td></td>
+<td></td>
+<td></td>
+<td>✅ Simulation only</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>PART 16 — SAFE vs UNSAFE CLAIMS</h2>
+<h3>✅ SAFE TO CLAIM</h3>
+<ul>
+<li>"Transparent 6-factor flood risk scoring, weights sum to 1.00"</li>
+<li>"15 real Himalayan watershed villages (Chamoli, Rudraprayag, Wayanad)"</li>
+<li>"Census 2011 population data from official GOI DCHB"</li>
+<li>"15 historical landslides from ISRO NRSC Atlas and GSI NLSM"</li>
+<li>"63 shelter candidates from USDMA/DDMP government documents"</li>
+<li>"Hazard-weighted Dijkstra pathfinding (correctly implemented)"</li>
+<li>"2-Layer LSTM hydrograph on 87,600-timestep synthetic physics catchment data"</li>
+<li>"NSE=0.882 on synthetic validation set" (with caveat about synthetic data)</li>
+<li>"Multilingual template alerts: EN, HI, Garhwali, Kumaoni, Nepali"</li>
+<li>"What-If simulator with no global state mutation"</li>
+<li>"Live Open-Meteo integration for baseline NORMAL scenario"</li>
+<li>"IMD/NDMA CAP alert feed integration (live attempt, 5-min cache)"</li>
+<li>"IoT-ready ingestion API (architecture ready, no hardware deployed)"</li>
+<li>"206 automated pytest tests covering all major components"</li>
+<li>"Explicit data provenance labels: LIVE / CACHED / OFFLINE_DEMO / REAL_STATIC"</li>
+</ul>
+<h3>❌ DO NOT CLAIM</h3>
+<ul>
+<li>"218 tests passing" — actual: 206 passing, 12 failing</li>
+<li>"Real-time CWC river data" — CWC adapter always returns None</li>
+<li>"AI-powered risk scores" — flood/landslide = weighted formula</li>
+<li>"SMS or WhatsApp alerts delivered" — SIMULATION_ONLY</li>
+<li>"AWS / EC2 / RDS" — not found in codebase</li>
+<li>"Database" — no database of any kind</li>
+<li>"Real-time for all scenarios" — only NORMAL uses live API</li>
+<li>"IoT sensors deployed" — empty store at startup</li>
+<li>"NSE validated against real gauge data" — synthetic validation only</li>
+<li>"Live road closures" — model-derived conditions</li>
+</ul>
+<hr />
+<h2>PART 17 — TOP 5 FIXES BEFORE SIH DEMO</h2>
+<ol>
+<li><strong>Fix 12 failing tests</strong> — update Feature 01/02/03 test expectations to match the current offline-for-HEAVY_RAIN design</li>
+<li><strong>Fix README test count</strong> — "218 Passing" → "206 passing"</li>
+<li><strong>Fix README shelter count</strong> — resolve "33" vs "63" contradiction</li>
+<li><strong>Rotate Telegram Bot token</strong> — remove from <code>.env</code> and hardcoded fallback in <code>send_telegram_alert.py</code>; generate a new token</li>
+<li><strong>Prepare judge answers</strong> — clear statements on LSTM synthetic training data, no AWS, no SMS delivery, no live CWC</li>
+</ol>
+<hr />
+<h2>SUMMARY CARD</h2>
+<pre><code>PROJECT:         APADA MITRA (SIH26192)
+FRONTEND:        React 18 + TypeScript + Vite + Tailwind + Leaflet
+BACKEND:         Python FastAPI (NO DATABASE — in-memory only)
+ML:              1 LSTM (2-layer, h=32, NumPy inference, SYNTHETIC training)
+CLOUD:           Vercel ✅ | Render (docs claim) | AWS ❌
+DATABASE:        NONE
+VILLAGES:        15 (real locations, synthetic parameters)
+ROADS:           24 segments (SYNTHETIC — self-labeled)
+SHELTERS:        63 candidates (static govt DDMP sources)
+IOT ACTIVE:      0 (API ready, no hardware)
+CWC LIVE:        0 of 8 stations (no credentials)
+TESTS:           206 PASS / 12 FAIL (README incorrectly claims 218)
+LIVE SOURCES:    Open-Meteo, wttr.in, Open-Elevation, IMD CAP (NORMAL scenario / attempted)
+SECURITY ISSUE:  Telegram token exposed in .env and source code
+</code></pre>
+</body>
+</html>

@@ -35,3 +35,6 @@ Thumbs.db
 scratch/
 chrome_dom.html
 scratch_*.py
+
+# Legacy / unused UI snapshots
+frontend/src_backup_redesign/

@@ -150,7 +150,16 @@ export function useDisasterData() {
       setShelterRec(rec);
     } catch (err: any) {
       console.error('Route calculation error:', err);
-      alert(err.message || 'Failed to compute evacuation route');
+      const raw = err?.message || '';
+      const isNoRoute = /no safe/i.test(raw) || /accessible/i.test(raw);
+      const msg = isNoRoute
+        ? `No safe evacuation route could be computed for ${selectedVillageId}.\n\n` +
+          `This occurs when all candidate roads to nearby shelters are blocked (e.g. under an EXTREME_RAIN scenario), ` +
+          `or the destination lies on a disconnected road subgraph — VIL-013 (Himachal Pradesh), ` +
+          `VIL-014 and VIL-015 (Kerala) are intentionally isolated from Uttarakhand and cannot be routed together by design.\n\n` +
+          `Try a different village, reduce scenario severity, or click RESET DEMO.`
+        : (raw || 'Failed to compute evacuation route');
+      alert(msg);
     } finally {
       setRouteLoading(false);
     }
