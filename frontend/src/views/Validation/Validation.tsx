@@ -118,6 +118,7 @@ export const Validation: React.FC<Props> = ({
 }) => {
   const [selectedEventId, setSelectedEventId] = useState<string>('HIST-2021-CHAMOLI');
   const [isDetailExpanded, setIsDetailExpanded] = useState(false);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
 
   useEffect(() => {
     setIsDetailExpanded(false);
@@ -153,17 +154,25 @@ export const Validation: React.FC<Props> = ({
       </div>
 
       {/* 2. MAIN BENTO GRID: LEFT MAP + RIGHT REPLAY WORKSPACE */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
-        {/* LEFT HISTORICAL CATCHMENT MAP BENTO (5 COLS) */}
-        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden relative">
+        {/* LEFT HISTORICAL CATCHMENT MAP BENTO */}
+        <div className={`${isRightPanelOpen ? 'lg:col-span-5' : 'lg:col-span-12'} bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink transition-all duration-300`}>
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <MapPin className="w-3.5 h-3.5 text-[#FF7A18]" />
               <span>HISTORICAL CASE STUDY CATCHMENT ZONE</span>
             </div>
-            <span className="text-[10px] font-mono text-gray-400">
-              {activeEvent.title.split(' ')[0]} Catchment
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono text-gray-400 hidden sm:inline">
+                {activeEvent.title.split(' ')[0]} Catchment
+              </span>
+              <button 
+                onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
+                className="ml-2 bg-[#14181D] hover:bg-[#1C2228] border border-white/20 hover:border-[#FF7A18]/50 text-gray-300 hover:text-white px-2 py-0.5 rounded cursor-pointer transition-all flex items-center gap-1 shadow-inner text-[10px] font-mono"
+              >
+                {isRightPanelOpen ? 'HIDE CATALOG ✕' : 'SHOW CATALOG ☰'}
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 w-full h-full relative rounded-2xl overflow-hidden">
@@ -197,8 +206,9 @@ export const Validation: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* RIGHT VALIDATION REPLAY & METRICS WORKSPACE (7 COLS) */}
-        <div className="lg:col-span-7 h-full min-h-[400px] lg:min-h-0 overflow-visible lg:overflow-y-auto space-y-3 pr-1">
+        {/* RIGHT VALIDATION REPLAY & METRICS WORKSPACE */}
+        {isRightPanelOpen && (
+        <div className="lg:col-span-7 h-full min-h-[400px] lg:min-h-0 overflow-visible lg:overflow-y-auto space-y-3 pr-1 animate-in fade-in zoom-in duration-300">
           {/* Bento Card 1: Transparent Scientific Honesty Notice */}
           <div className="bento-card p-4 space-y-2 border-amber-500/30 bg-[#14181D]">
             <div className="flex items-start gap-3">
@@ -473,6 +483,7 @@ export const Validation: React.FC<Props> = ({
             </div>
           </div>
         </div>
+        )}
       </div>
       <style>{`
         @keyframes validation-cascade-stage {

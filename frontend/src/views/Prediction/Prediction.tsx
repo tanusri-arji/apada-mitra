@@ -49,6 +49,7 @@ export const Prediction: React.FC<Props> = ({
   const [activeSubTab, setActiveSubTab] = useState<'XAI_EXPLANATION' | 'WHAT_IF_SANDBOX' | 'DEEP_HYDROGRAPH'>('XAI_EXPLANATION');
   const [leadTime, setLeadTime] = useState<import('../../types').VillageLeadTimeDetail | null>(null);
   const [historicalSummary, setHistoricalSummary] = useState<any>(null);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
 
   useEffect(() => {
     if (!selectedVillageId) {
@@ -281,17 +282,25 @@ export const Prediction: React.FC<Props> = ({
       </div>
 
       {/* 2. MAIN SPLIT CONTENT: MAP + DEEP PREDICTION / WHAT-IF */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-2.5 lg:gap-3 min-h-[440px] lg:min-h-0 overflow-hidden">
-        {/* LEFT SPATIAL HAZARD CONTEXT MAP (5 COLS) */}
-        <div className="lg:col-span-5 bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-2.5 lg:gap-3 min-h-[440px] lg:min-h-0 overflow-hidden relative">
+        {/* LEFT SPATIAL HAZARD CONTEXT MAP */}
+        <div className={`${isRightPanelOpen ? 'lg:col-span-5' : 'lg:col-span-12'} bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink transition-all duration-300`}>
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <MapPin className="w-3.5 h-3.5 text-[#FF7A18]" />
               <span>SPATIAL HAZARD CONTEXT</span>
             </div>
-            <span className="text-[10px] font-mono text-gray-400">
-              {stationMeta.villageName} ({stationMeta.region})
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono text-gray-400 hidden sm:inline">
+                {stationMeta.villageName} ({stationMeta.region})
+              </span>
+              <button 
+                onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
+                className="ml-2 bg-[#14181D] hover:bg-[#1C2228] border border-white/20 hover:border-[#FF7A18]/50 text-gray-300 hover:text-white px-2 py-0.5 rounded cursor-pointer transition-all flex items-center gap-1 shadow-inner text-[10px] font-mono"
+              >
+                {isRightPanelOpen ? 'HIDE ANALYSIS ✕' : 'SHOW ANALYSIS ☰'}
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 w-full h-full relative rounded-2xl overflow-hidden">
@@ -307,8 +316,9 @@ export const Prediction: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* RIGHT BENTO WORKSPACE: XAI EXPLANATIONS OR WHAT-IF SANDBOX (7 COLS) */}
-        <div className="lg:col-span-7 h-full overflow-y-auto space-y-3 pr-1">
+        {/* RIGHT BENTO WORKSPACE: XAI EXPLANATIONS OR WHAT-IF SANDBOX */}
+        {isRightPanelOpen && (
+        <div className="lg:col-span-7 h-full overflow-y-auto space-y-3 pr-1 animate-in fade-in zoom-in duration-300">
           {activeSubTab === 'XAI_EXPLANATION' ? (
             <div className="space-y-3">
               {/* Bento Card 1: Risk Drivers / Why This Risk? (Factor Contribution Bars) */}
@@ -436,6 +446,7 @@ export const Prediction: React.FC<Props> = ({
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );
