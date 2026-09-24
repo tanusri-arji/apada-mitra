@@ -44,6 +44,7 @@ export const LiveMonitoring: React.FC<Props> = ({
   shelters,
 }) => {
   const [stationSearch, setStationSearch] = useState('');
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
 
   const stationMeta = getStationMetadata(selectedVillageId);
 
@@ -169,9 +170,9 @@ export const LiveMonitoring: React.FC<Props> = ({
       </div>
 
       {/* 2. MAIN BENTO GRID: DOMINANT GIS MAP + SIDE TELEMETRY STACK */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden">
-        {/* DOMINANT GIS MAP BENTO CARD (8 COLUMNS ON LARGE SCREEN) */}
-        <div className="lg:col-span-8 bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden relative">
+        {/* DOMINANT GIS MAP BENTO CARD */}
+        <div className={`${isRightPanelOpen ? 'lg:col-span-8' : 'lg:col-span-12'} bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink transition-all duration-300`}>
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -182,7 +183,13 @@ export const LiveMonitoring: React.FC<Props> = ({
             <div className="flex items-center gap-2 text-[10px] font-mono text-gray-400">
               <span>Nodes: <strong className="text-white">15 Active</strong></span>
               <span>•</span>
-              <span className="text-[#FFB703] font-bold">ArcGIS Dark Basemap</span>
+              <span className="text-[#FFB703] font-bold hidden sm:inline">ArcGIS Dark Basemap</span>
+              <button 
+                onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}
+                className="ml-2 bg-[#14181D] hover:bg-[#1C2228] border border-white/20 hover:border-[#FF7A18]/50 text-gray-300 hover:text-white px-2 py-0.5 rounded cursor-pointer transition-all flex items-center gap-1 shadow-inner"
+              >
+                {isRightPanelOpen ? 'HIDE LIST ✕' : 'SHOW LIST ☰'}
+              </button>
             </div>
           </div>
 
@@ -199,8 +206,9 @@ export const LiveMonitoring: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* RIGHT BENTO STACK (4 COLUMNS ON LARGE SCREEN) */}
-        <div className="lg:col-span-4 flex flex-col gap-3 h-full min-h-[380px] lg:min-h-0 overflow-visible lg:overflow-hidden">
+        {/* RIGHT BENTO STACK */}
+        {isRightPanelOpen && (
+          <div className="lg:col-span-4 flex flex-col gap-3 h-full min-h-[380px] lg:min-h-0 overflow-visible lg:overflow-hidden animate-in fade-in zoom-in duration-300">
           {/* Bento Card 1: Selected Station Telemetry Card */}
           <div className="bento-card p-4 space-y-3 flex-shrink-0">
             <div className="flex items-start justify-between border-b border-white/10 pb-2.5">
@@ -349,6 +357,7 @@ export const LiveMonitoring: React.FC<Props> = ({
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
