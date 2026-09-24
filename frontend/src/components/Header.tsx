@@ -181,8 +181,8 @@ export const Header: React.FC<Props> = ({
         )}
 
         {/* SYSTEM STATUS PILL (EMERALD) */}
-        <div className="hidden md:flex items-center gap-2 bg-[#14181D] px-3 py-1.5 rounded-xl border border-white/10 text-[11px]">
-          <span className={`w-2 h-2 rounded-full ${readinessDotColor} shadow-sm shadow-emerald-500/50`}></span>
+        <div className="hidden md:flex items-center gap-2 bg-[#14181D]/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 text-[11px] shadow-inner">
+          <span className={`w-2 h-2 rounded-full ${readinessDotColor} shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse`}></span>
           <span className="text-gray-400">SYSTEM:</span>
           <span className={`font-black ${readinessTextColor}`}>
             {readinessText}

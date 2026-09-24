@@ -166,9 +166,9 @@ export const Sidebar: React.FC<Props> = ({
                   onTabChange(item.id);
                   if (onCloseMobile) onCloseMobile();
                 }}
-                className={`w-full text-left p-3 rounded-2xl transition-all duration-200 flex items-center justify-between group cursor-pointer relative ${
+                className={`w-full text-left p-3 rounded-2xl transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98] flex items-center justify-between group cursor-pointer relative ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#FF7A18] to-[#FFB703] text-black font-extrabold shadow-lg shadow-orange-500/25 scale-[1.02]'
+                    ? 'bg-gradient-to-r from-[#FF7A18] to-[#FFB703] text-black font-extrabold shadow-[0_0_20px_rgba(255,122,24,0.3)] scale-[1.02]'
                     : 'bg-[#14181D]/60 hover:bg-[#181D22] text-gray-300 hover:text-white border border-white/5 hover:border-white/10'
                 }`}
               >
@@ -289,9 +289,9 @@ export const Sidebar: React.FC<Props> = ({
                     onSelectVillage(v.village_id);
                     if (onCloseMobile) onCloseMobile();
                   }}
-                  className={`p-2.5 cursor-pointer transition-all flex items-center justify-between group ${
+                  className={`p-2.5 cursor-pointer transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98] flex items-center justify-between group ${
                     isSelected
-                      ? 'bg-[#FF7A18]/15 border-l-4 border-l-[#FF7A18] text-white shadow-inner'
+                      ? 'bg-[#FF7A18]/15 border-l-4 border-l-[#FF7A18] text-white shadow-[inset_4px_0_15px_rgba(255,122,24,0.15)]'
                       : 'hover:bg-[#181D22] border-l-4 border-l-transparent text-gray-300'
                   }`}
                 >

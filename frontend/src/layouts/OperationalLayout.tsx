@@ -20,7 +20,7 @@ export const OperationalLayout: React.FC<OperationalLayoutProps> = ({
   onCloseMobileSidebar,
 }) => {
   return (
-    <div className="flex h-screen h-[100dvh] max-h-screen max-h-[100dvh] w-full min-w-0 bg-[#08090B] text-white overflow-hidden overflow-x-hidden font-sans select-none relative">
+    <div className="flex h-screen h-[100dvh] max-h-screen max-h-[100dvh] w-full min-w-0 bg-transparent text-white overflow-hidden overflow-x-hidden font-sans select-none relative">
       {/* 1. Desktop Fixed Left Sidebar (Collapsible) */}
       {isDesktopSidebarOpen && (
         <div className="hidden lg:flex flex-shrink-0 h-full transition-all duration-300">
@@ -45,7 +45,7 @@ export const OperationalLayout: React.FC<OperationalLayoutProps> = ({
       )}
 
       {/* 3. Main Operational Column */}
-      <div className="flex-1 flex flex-col h-full min-h-0 min-w-0 overflow-hidden overflow-x-hidden relative bg-[#08090B] w-full">
+      <div className="flex-1 flex flex-col h-full min-h-0 min-w-0 overflow-hidden overflow-x-hidden relative bg-transparent w-full">
         {/* Top Glassmorphic Search & Command Bar */}
         {topBar}
 
@@ -53,7 +53,7 @@ export const OperationalLayout: React.FC<OperationalLayoutProps> = ({
         {banner}
 
         {/* Main Operational Viewport (Responsive Bento Layout) */}
-        <main className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden overflow-x-hidden relative bg-[#08090B] w-full">
+        <main className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden overflow-x-hidden relative bg-transparent w-full">
           {children}
         </main>
       </div>

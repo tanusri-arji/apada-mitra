@@ -69,7 +69,7 @@ export const LiveMonitoring: React.FC<Props> = ({
   );
 
   return (
-    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-[#08090B] overflow-y-auto overflow-x-hidden lg:overflow-hidden relative font-sans p-2.5 lg:p-3.5 pb-28 sm:pb-32 lg:pb-3.5 space-y-2.5 lg:space-y-3">
+    <div className="flex-1 flex flex-col h-full min-h-0 w-full bg-transparent overflow-y-auto overflow-x-hidden lg:overflow-hidden relative font-sans p-2.5 lg:p-3.5 pb-28 sm:pb-32 lg:pb-3.5 space-y-2.5 lg:space-y-3">
       {/* 1. TOP BENTO ROW: 6 COMPACT SENSOR METRICS CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 flex-shrink-0">
         {/* CURRENT RAINFALL */}
@@ -286,10 +286,10 @@ export const LiveMonitoring: React.FC<Props> = ({
                   <button
                     key={v.village_id}
                     onClick={() => onSelectVillage(v.village_id)}
-                    className={`w-full text-left p-2 rounded-xl border transition flex items-center justify-between cursor-pointer ${
+                    className={`w-full text-left p-2 rounded-xl border transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98] flex items-center justify-between cursor-pointer ${
                       isSelected
-                        ? 'bg-gradient-to-r from-[#FF7A18]/20 to-[#FFB703]/20 border-[#FF7A18] text-white shadow-md'
-                        : 'bg-[#14181D]/60 border-white/5 text-gray-300 hover:border-white/20 hover:text-white'
+                        ? 'bg-gradient-to-r from-[#FF7A18]/20 to-[#FFB703]/20 border-[#FF7A18] text-white shadow-[0_0_15px_rgba(255,122,24,0.15)]'
+                        : 'bg-[#14181D]/60 border-white/5 text-gray-300 hover:border-white/20 hover:text-white hover:bg-[#1A1F26]'
                     }`}
                   >
                     <div>
