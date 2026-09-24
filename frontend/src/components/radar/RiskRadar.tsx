@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { fetchRiskOverview, fetchVillagesList } from '../../api/client';
 import { RiskOverviewResponse, RiskLevel } from '../../types';
-import { Activity, X, Radar } from 'lucide-react';
+import { X, Radar } from 'lucide-react';
 
 const SECTOR_COUNT = 8;
 const levelOrder: RiskLevel[] = ['LOW', 'MODERATE', 'HIGH', 'CRITICAL'];
@@ -63,7 +63,6 @@ export const RiskRadar: React.FC = () => {
 
   const critical = impact?.critical_villages_count ?? 0;
   const high = impact?.high_villages_count ?? 0;
-  const moderate = impact?.moderate_villages_count ?? 0;
   
   const toggleButton = (
     <button
