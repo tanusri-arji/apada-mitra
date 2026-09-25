@@ -63,17 +63,6 @@ export const RiskRadar: React.FC = () => {
       setDispatchLogs([]);
     }, 6000);
   };
-    try {
-      const [riskRes, vList] = await Promise.all([
-        fetchRiskOverview().catch(() => null),
-        fetchVillagesList().catch(() => []),
-      ]);
-      if (riskRes) setOverview(riskRes);
-      if (vList) setVillageCount(vList.length);
-    } catch (err) {
-      console.error('Radar load error:', err);
-    }
-  }, []);
 
   useEffect(() => {
     loadData();
