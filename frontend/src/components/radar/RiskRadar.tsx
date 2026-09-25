@@ -101,7 +101,7 @@ export const RiskRadar: React.FC = () => {
   const high = impact?.high_villages_count ?? 0;
 
   return (
-    <div className="flex-1 w-full h-full flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 bg-[#08090B] overflow-x-hidden overflow-y-auto p-4 relative">
+    <div className="flex-1 w-full h-full flex flex-col lg:flex-row items-center justify-start lg:justify-center gap-4 lg:gap-8 bg-[#08090B] overflow-x-hidden overflow-y-auto p-4 relative">
       {/* Radar Main Panel */}
       <div className="relative p-4 sm:p-10 bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,255,150,0.1)] flex flex-col items-center flex-shrink-0 w-full max-w-lg lg:max-w-none lg:w-auto overflow-hidden">
         
@@ -110,10 +110,10 @@ export const RiskRadar: React.FC = () => {
           COMMAND CENTER SONAR
         </h3>
 
-        <div className="relative w-full max-w-[440px] aspect-square flex items-center justify-center">
+        <div className="relative w-full max-w-[440px] flex items-center justify-center">
           
           {/* SVG Radar Grid and Sectors */}
-          <svg viewBox="0 0 440 440" className="absolute inset-0 w-full h-full">
+          <svg viewBox="0 0 440 440" className="w-full h-auto block">
             {/* Outer segmented ring */}
             {sectors.map((lvl, i) => {
               const color = lvl === 'critical' ? '#EF4444' : lvl === 'high' ? '#F97316' : lvl === 'moderate' ? '#EAB308' : '#10B981';
