@@ -6,6 +6,7 @@ import {
   Maximize,
   Minimize,
   Menu,
+  Shield
 } from 'lucide-react';
 import { ScenarioStateResponse, ReadinessResponse, TopLevelView, VillageRiskDetail } from '../types';
 
@@ -105,8 +106,15 @@ export const Header: React.FC<Props> = ({
 
   return (
     <header className="h-16 px-3 lg:px-6 bg-[#0E1115]/90 backdrop-blur-xl border-b border-white/10 flex items-center justify-between gap-2 sm:gap-4 z-30 font-sans flex-shrink-0 relative">
+      {/* Tricolor Accent Line */}
+      <div className="absolute top-0 left-0 right-0 h-1 flex z-50">
+        <div className="flex-1 bg-[#FF9933]"></div>
+        <div className="flex-1 bg-white"></div>
+        <div className="flex-1 bg-[#138808]"></div>
+      </div>
+
       {/* 1. Left Page Title, Subtitle & Navigation Toggle */}
-      <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
+      <div className="flex items-center gap-3 min-w-0 mt-1">
         {(onToggleSidebar || onToggleMobileSidebar) && (
           <button
             onClick={onToggleSidebar || onToggleMobileSidebar}
@@ -117,13 +125,28 @@ export const Header: React.FC<Props> = ({
             <Menu className="w-5 h-5 text-[#FFB703]" />
           </button>
         )}
-        <div className="flex-shrink-0 min-w-0">
-          <h1 className="text-sm sm:text-base lg:text-lg font-black text-white tracking-wider uppercase font-mono leading-none truncate">
-            {pageInfo.title}
-          </h1>
-          <p className="text-xs text-gray-400 font-sans tracking-normal mt-0.5 hidden sm:block truncate">
-            {pageInfo.subtitle}
-          </p>
+        
+        {/* Official Badge & Title */}
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-9 h-9 flex-shrink-0 rounded-lg bg-gradient-to-br from-[#0E1115] to-[#1a1f26] border border-white/10 flex items-center justify-center shadow-[0_0_10px_rgba(255,153,51,0.1)]">
+            <Shield className="w-5 h-5 text-[#FF9933]" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="text-[9px] sm:text-[10px] lg:text-xs font-black text-white tracking-wider uppercase font-mono leading-none truncate">
+                APADA MITRA <span className="text-[#FF9933] opacity-80">//</span> DISASTER INTELLIGENCE COMMAND
+              </h1>
+            </div>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-[9px] text-gray-400 font-sans font-bold tracking-widest uppercase">
+                {pageInfo.title}
+              </p>
+              <span className="text-[9px] text-gray-600">|</span>
+              <p className="text-[8px] text-[#138808] font-mono tracking-wider font-bold">
+                SIH 2026 / MINISTRY OF JAL SHAKTI
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

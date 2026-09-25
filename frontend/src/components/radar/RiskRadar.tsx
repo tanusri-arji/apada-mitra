@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchRiskOverview, fetchVillagesList, sendTelegramAlert } from '../../api/client';
 import { RiskOverviewResponse, RiskLevel } from '../../types';
-import { Radar, Send, TerminalSquare } from 'lucide-react';
+import { Radar, Send, TerminalSquare, ChevronRight, ChevronLeft, Activity } from 'lucide-react';
 
 const SECTOR_COUNT = 8;
 const levelOrder: RiskLevel[] = ['LOW', 'MODERATE', 'HIGH', 'CRITICAL'];
@@ -22,6 +22,7 @@ export const RiskRadar: React.FC = () => {
   const [sweepAngle, setSweepAngle] = useState(0);
   const [dispatching, setDispatching] = useState(false);
   const [dispatchLogs, setDispatchLogs] = useState<string[]>([]);
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
 
   const loadData = useCallback(async () => {
     try {
@@ -99,7 +100,7 @@ export const RiskRadar: React.FC = () => {
   const high = impact?.high_villages_count ?? 0;
 
   return (
-    <div className="flex-1 w-full h-full flex items-center justify-center gap-8 bg-[#08090B] overflow-hidden p-4">
+    <div className="flex-1 w-full h-full flex items-center justify-center gap-8 bg-[#08090B] overflow-hidden p-4 relative">
       {/* Radar Main Panel */}
       <div className="relative p-10 bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,255,150,0.1)] flex flex-col items-center flex-shrink-0">
         
@@ -205,11 +206,24 @@ export const RiskRadar: React.FC = () => {
 
       </div>
 
+      {/* Panel Toggle Button */}
+      <button 
+        onClick={() => setIsPanelOpen(!isPanelOpen)}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[#040909]/90 border border-emerald-500/40 border-r-0 text-emerald-400 p-2 rounded-l-xl hover:bg-emerald-500/20 transition-all backdrop-blur-md shadow-[0_0_15px_rgba(0,255,150,0.1)]"
+        title={isPanelOpen ? "Hide Monitored Nodes" : "Show Monitored Nodes"}
+      >
+        {isPanelOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+      </button>
+
       {/* Side Panel for Village List */}
-      <div className="w-[320px] max-h-[640px] h-full bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-3xl shadow-[0_0_40px_rgba(0,255,150,0.05)] p-6 flex flex-col flex-shrink-0 relative">
+      <div 
+        className={`transition-all duration-500 ease-in-out max-h-[640px] h-full bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-3xl shadow-[0_0_40px_rgba(0,255,150,0.05)] flex flex-col flex-shrink-0 relative overflow-hidden ${
+          isPanelOpen ? 'w-[320px] p-6 opacity-100 ml-0 translate-x-0' : 'w-0 p-0 opacity-0 -ml-8 translate-x-8'
+        }`}
+      >
         <h3 className="text-emerald-400 font-mono font-bold text-sm tracking-widest mb-4 border-b border-emerald-500/20 pb-3 flex items-center justify-between">
           <span>MONITORED NODES</span>
-          <span className="text-white bg-emerald-500/20 px-2 py-0.5 rounded text-[10px]">{total} TOTAL</span>
+          <span className="text-white bg-emerald-500/20 px-2 py-0.5 rounded text-[10px]">{total} ACTIVE</span>
         </h3>
         
         {/* Dispatch Alerts Button */}
