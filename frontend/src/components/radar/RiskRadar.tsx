@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { fetchRiskOverview, fetchVillagesList, sendTelegramAlert } from '../../api/client';
 import { RiskOverviewResponse, RiskLevel } from '../../types';
-import { Radar, Send, TerminalSquare, ChevronRight, ChevronLeft, Activity } from 'lucide-react';
+import { Radar, Send, TerminalSquare, ChevronRight, ChevronLeft } from 'lucide-react';
 
 const SECTOR_COUNT = 8;
 const levelOrder: RiskLevel[] = ['LOW', 'MODERATE', 'HIGH', 'CRITICAL'];
