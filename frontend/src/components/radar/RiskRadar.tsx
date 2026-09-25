@@ -103,17 +103,17 @@ export const RiskRadar: React.FC = () => {
   return (
     <div className="flex-1 w-full h-full flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 bg-[#08090B] overflow-x-hidden overflow-y-auto p-4 relative">
       {/* Radar Main Panel */}
-      <div className="relative p-4 sm:p-10 bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,255,150,0.1)] flex flex-col items-center flex-shrink-0 w-full max-w-lg lg:max-w-none lg:w-auto">
+      <div className="relative p-4 sm:p-10 bg-[#040909]/80 backdrop-blur-md border border-emerald-500/20 rounded-[2.5rem] shadow-[0_0_80px_rgba(0,255,150,0.1)] flex flex-col items-center flex-shrink-0 w-full max-w-lg lg:max-w-none lg:w-auto overflow-hidden">
         
         <h3 className="text-emerald-400 font-mono font-bold text-lg sm:text-xl mb-4 sm:mb-8 tracking-widest flex items-center gap-3">
           <Radar className="w-6 h-6 animate-pulse" />
           COMMAND CENTER SONAR
         </h3>
 
-        <div className="relative w-full max-w-[440px] aspect-square flex items-center justify-center transform scale-75 sm:scale-100">
+        <div className="relative w-full max-w-[440px] aspect-square flex items-center justify-center">
           
           {/* SVG Radar Grid and Sectors */}
-          <svg width="440" height="440" viewBox="0 0 440 440" className="absolute inset-0">
+          <svg viewBox="0 0 440 440" className="absolute inset-0 w-full h-full">
             {/* Outer segmented ring */}
             {sectors.map((lvl, i) => {
               const color = lvl === 'critical' ? '#EF4444' : lvl === 'high' ? '#F97316' : lvl === 'moderate' ? '#EAB308' : '#10B981';
@@ -151,8 +151,9 @@ export const RiskRadar: React.FC = () => {
 
           {/* Sweeping Cone */}
           <div
-            className="absolute inset-[20px] rounded-full pointer-events-none overflow-hidden"
+            className="absolute rounded-full pointer-events-none overflow-hidden"
             style={{
+              inset: '4.54%', // equivalent to 20px on 440px width
               transform: `rotate(${sweepAngle}deg)`,
             }}
           >
@@ -175,10 +176,10 @@ export const RiskRadar: React.FC = () => {
             return (
               <div 
                 key={`label-${i}`} 
-                className="absolute text-[9px] font-mono font-bold text-emerald-500/70 uppercase"
+                className="absolute text-[8px] sm:text-[9px] font-mono font-bold text-emerald-500/70 uppercase"
                 style={{ 
-                  left: `${x}px`, 
-                  top: `${y}px`, 
+                  left: `${(x / 440) * 100}%`, 
+                  top: `${(y / 440) * 100}%`, 
                 transform: `translate(-50%, -50%) rotate(${textRot}deg)`
               }}
             >
@@ -188,12 +189,12 @@ export const RiskRadar: React.FC = () => {
           })}
 
           {/* Center Text Stats Box */}
-          <div className="absolute flex flex-col items-center justify-center text-center z-10 bg-[#020606]/90 w-[110px] h-[110px] rounded-full border border-emerald-500/30 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)]">
-             <div className="text-emerald-500 font-mono text-[9px] tracking-widest uppercase opacity-80 mt-1">Villages</div>
-             <div className="text-emerald-50 font-bold text-2xl">{total}</div>
-             <div className="w-12 h-px bg-emerald-500/30 my-1"></div>
-             <div className="text-red-400 font-mono text-[9px] tracking-widest uppercase opacity-90">High Risk</div>
-             <div className="text-red-400 font-bold text-lg">{critical + high}</div>
+          <div className="absolute inset-0 m-auto flex flex-col items-center justify-center text-center z-10 bg-[#020606]/90 w-[90px] h-[90px] sm:w-[110px] sm:h-[110px] rounded-full border border-emerald-500/30 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+             <div className="text-emerald-500 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase opacity-80 mt-1">Villages</div>
+             <div className="text-emerald-50 font-bold text-xl sm:text-2xl">{total}</div>
+             <div className="w-10 sm:w-12 h-px bg-emerald-500/30 my-0.5 sm:my-1"></div>
+             <div className="text-red-400 font-mono text-[8px] sm:text-[9px] tracking-widest uppercase opacity-90">High Risk</div>
+             <div className="text-red-400 font-bold text-base sm:text-lg">{critical + high}</div>
           </div>
         </div>
 
