@@ -128,15 +128,15 @@ export const Header: React.FC<Props> = ({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="text-[9px] sm:text-[10px] lg:text-xs font-black text-white tracking-wider uppercase font-mono leading-none truncate">
-                APADA MITRA <span className="text-[#FF9933] opacity-80">//</span> DISASTER INTELLIGENCE COMMAND
+                APADA MITRA <span className="hidden sm:inline text-[#FF9933] opacity-80">//</span> <span className="hidden sm:inline">DISASTER INTELLIGENCE COMMAND</span>
               </h1>
             </div>
             <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-[9px] text-gray-400 font-sans font-bold tracking-widest uppercase">
+              <p className="text-[9px] text-gray-400 font-sans font-bold tracking-widest uppercase truncate max-w-[120px] sm:max-w-none">
                 {pageInfo.title}
               </p>
-              <span className="text-[9px] text-gray-600">|</span>
-              <p className="text-[8px] text-[#138808] font-mono tracking-wider font-bold">
+              <span className="hidden sm:inline text-[9px] text-gray-600">|</span>
+              <p className="hidden sm:inline text-[8px] text-[#138808] font-mono tracking-wider font-bold truncate">
                 SIH 2026 / MINISTRY OF JAL SHAKTI
               </p>
             </div>
