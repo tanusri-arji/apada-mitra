@@ -282,11 +282,19 @@ export async function fetchModelBenchmarkInfo(): Promise<ModelBenchmarkInfoRespo
 }
 
 export async function sendTelegramAlert(chatId: string): Promise<any> {
-  const res = await fetch(`${API_BASE}/alerts/telegram/dispatch`, {
+  const TELEGRAM_BOT_TOKEN = "8826544763:AAHpPT4xe_y4Jhv9cOhOJb1rgQ3Gg4UCgDM";
+  const message = `🚨 <b>APADA MITRA ALERT</b>\n\n<b>CRITICAL FLASH FLOOD WARNING</b>\nImmediate Evacuation Required.\n\nSeverity: HIGH RISK\nSource: Command Sonar`;
+  
+  const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId })
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'HTML'
+    })
   });
+  
   if (!res.ok) throw new Error('Failed to dispatch telegram alert');
   return res.json();
 }
