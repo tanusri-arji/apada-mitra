@@ -281,6 +281,12 @@ export async function fetchModelBenchmarkInfo(): Promise<ModelBenchmarkInfoRespo
   return res.json();
 }
 
-
-
-
+export async function sendTelegramAlert(chatId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/alerts/telegram/dispatch`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId })
+  });
+  if (!res.ok) throw new Error('Failed to dispatch telegram alert');
+  return res.json();
+}

@@ -559,13 +559,13 @@ Authority: District Disaster Management Authority (DDMA)`,
                 </div>
               </div>
               <a
-                href="https://t.me/apada_mitra_2026_bot"
+                href="https://t.me/apada_mitra_bot"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-300 font-bold bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-500/30 transition hover:border-cyan-500/60 cursor-pointer"
               >
                 <Bot className="w-3 h-3" />
-                <span>@apada_mitra_2026_bot</span>
+                <span>@apada_mitra_bot</span>
                 <ExternalLink className="w-2.5 h-2.5 ml-0.5 opacity-70" />
               </a>
             </div>
