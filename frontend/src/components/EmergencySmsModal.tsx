@@ -254,39 +254,7 @@ Authority: District Disaster Management Authority (DDMA)`,
 
       const token = customBotToken.trim() || '8826544763:AAHpPT4xe_y4Jhv9cOhOJb1rgQ3Gg4UCgDM';
 
-      try {
-        // 1. Try server-side proxy
-        const resp = await fetch('/api/alerts/telegram/dispatch', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: targetChat,
-            text: textToSend,
-            bot_token: '8826544763:AAHpPT4xe_y4Jhv9cOhOJb1rgQ3Gg4UCgDM',
-          }),
-        });
 
-        const result = await resp.json();
-
-        if (result.success) {
-          setIsTelegramDispatching(false);
-          setTelegramFeedback({
-            type: 'success',
-            message: `Live alert delivered to Telegram (Chat ID: ${targetChat})! Check your phone.`,
-          });
-          return { success: true, message: result.message, statusCode: result.status_code };
-        } else if (result.status_code !== 500 && !result.message?.includes('getaddrinfo')) {
-          setIsTelegramDispatching(false);
-          const is429 = result.status_code === 429;
-          setTelegramFeedback({
-            type: is429 ? 'warning' : 'error',
-            message: result.message || 'Telegram dispatch failed.',
-          });
-          return { success: false, message: result.message, statusCode: result.status_code };
-        }
-      } catch {
-        // Fall through to browser direct fetch
-      }
 
       // 2. Direct browser fetch fallback (if backend DNS / network had issues)
       try {
