@@ -255,7 +255,7 @@ Authority: District Disaster Management Authority (DDMA)`,
       setIsTelegramDispatching(true);
       setTelegramFeedback({ type: 'idle', message: '' });
 
-      const token = customBotToken.trim() || '8930236949:AAF4IO2am0V31BonD-bciYLuQHJCdK02NXc';
+      const token = customBotToken.trim() || '8826544763:AAHpPT4xe_y4Jhv9cOhOJb1rgQ3Gg4UCgDM';
 
       try {
         // 1. Try server-side proxy

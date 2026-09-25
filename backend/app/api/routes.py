@@ -1117,7 +1117,7 @@ def dispatch_telegram_alert(payload: TelegramDispatchRequest):
     Direct server-side dispatch of multilingual emergency alerts to Telegram.
     Bypasses client browser CORS and adblockers, provides detailed error diagnosis.
     """
-    token = payload.bot_token or os.getenv("TELEGRAM_BOT_TOKEN", "<INSERT_YOUR_TELEGRAM_BOT_TOKEN>")
+    token = payload.bot_token or os.getenv("TELEGRAM_BOT_TOKEN", "8826544763:AAHpPT4xe_y4Jhv9cOhOJb1rgQ3Gg4UCgDM")
     
     if token == "<INSERT_YOUR_TELEGRAM_BOT_TOKEN>":
         return TelegramDispatchResponse(
