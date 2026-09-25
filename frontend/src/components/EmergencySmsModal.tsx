@@ -80,9 +80,7 @@ export const EmergencySmsModal: React.FC<Props> = ({
   const [telegramChatId, setTelegramChatId] = useState<string>(() => {
     return localStorage.getItem('apada_telegram_chat_id') || '7558738119';
   });
-  const [customBotToken, setCustomBotToken] = useState<string>(() => {
-    return localStorage.getItem('apada_telegram_bot_token') || '';
-  });
+  const [customBotToken, setCustomBotToken] = useState<string>('');
   const [showAdvancedTelegram, setShowAdvancedTelegram] = useState(false);
   const [isTelegramDispatching, setIsTelegramDispatching] = useState(false);
   const [telegramFeedback, setTelegramFeedback] = useState<{
@@ -97,7 +95,6 @@ export const EmergencySmsModal: React.FC<Props> = ({
 
   const handleUpdateBotToken = (newToken: string) => {
     setCustomBotToken(newToken);
-    localStorage.setItem('apada_telegram_bot_token', newToken);
   };
 
   useEffect(() => {
@@ -671,7 +668,7 @@ Authority: District Disaster Management Authority (DDMA)`,
                     type="text"
                     value={customBotToken}
                     onChange={(e) => handleUpdateBotToken(e.target.value)}
-                    placeholder="Leave blank to use default @apada_mitra_2026_bot"
+                    placeholder="Leave blank to use default @apada_mitra_bot"
                     className="w-full bg-[#0E1115] border border-white/10 rounded px-2.5 py-1 text-[11px] text-white font-mono focus:border-cyan-500 focus:outline-none placeholder-gray-600"
                   />
                   <p className="text-[9px] text-gray-500 font-sans mt-1">
