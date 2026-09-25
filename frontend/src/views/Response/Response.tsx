@@ -163,9 +163,9 @@ export const Response: React.FC<Props> = ({
       </div>
 
       {/* 2. MAIN BENTO GRID: 60% EVACUATION MAP + 40% ACTION STACK */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden relative">
+      <div className="flex-none lg:flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-0 overflow-visible lg:overflow-hidden relative">
         {/* LARGE EVACUATION MAP BENTO */}
-        <div className={`${isRightPanelOpen ? 'lg:col-span-7' : 'lg:col-span-12'} bento-card p-2 flex flex-col h-[480px] sm:h-[520px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink transition-all duration-300`}>
+        <div className={`${isRightPanelOpen ? 'lg:col-span-7' : 'lg:col-span-12'} bento-card p-2 flex flex-col h-[480px] lg:h-full min-h-[440px] lg:min-h-0 overflow-hidden relative shadow-2xl flex-shrink-0 lg:flex-shrink transition-all duration-300`}>
           <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/10 mb-1 z-10 flex-shrink-0">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-white">
               <Compass className="w-3.5 h-3.5 text-[#FF7A18]" />
@@ -200,7 +200,7 @@ export const Response: React.FC<Props> = ({
 
         {/* RIGHT SIDE BENTO ACTION & SHELTER STACK */}
         {isRightPanelOpen && (
-        <div className="lg:col-span-5 h-full min-h-[400px] lg:min-h-0 overflow-visible lg:overflow-y-auto space-y-3 pr-1 animate-in fade-in zoom-in duration-300">
+        <div className="lg:col-span-5 h-auto lg:h-full lg:min-h-0 overflow-visible lg:overflow-y-auto space-y-3 pr-1 animate-in fade-in zoom-in duration-300">
           {/* Bento Card 1: Target Node Summary */}
           <div className="bento-card p-4 space-y-3 shadow-lg">
             <div className="flex items-start justify-between border-b border-white/10 pb-2.5">
