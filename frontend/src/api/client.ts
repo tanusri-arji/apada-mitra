@@ -295,6 +295,9 @@ export async function sendTelegramAlert(chatId: string): Promise<any> {
     })
   });
   
-  if (!res.ok) throw new Error('Failed to dispatch telegram alert');
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.description || 'Failed to dispatch telegram alert');
+  }
   return res.json();
 }

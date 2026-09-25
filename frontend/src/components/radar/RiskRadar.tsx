@@ -47,15 +47,16 @@ export const RiskRadar: React.FC = () => {
     
     try {
       // Calls the actual backend to dispatch via Telegram
-      await sendTelegramAlert('7695969720');
+      const targetChat = localStorage.getItem('apada_telegram_chat_id') || '7558738119';
+      await sendTelegramAlert(targetChat);
       
       setTimeout(() => {
         setDispatchLogs(prev => [...prev, '> Pushing alert to official Telegram Channel... [SUCCESS]']);
         setDispatchLogs(prev => [...prev, '> SMS dispatched to 42 local authorities... [SUCCESS]']);
       }, 2000);
-    } catch (err) {
+    } catch (err: any) {
       setTimeout(() => {
-        setDispatchLogs(prev => [...prev, '> [ERROR] Telegram API failed. Check bot token.']);
+        setDispatchLogs(prev => [...prev, `> [ERROR] Telegram API failed: ${err.message}`]);
       }, 2000);
     }
     
