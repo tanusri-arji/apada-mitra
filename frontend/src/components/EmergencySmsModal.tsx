@@ -262,7 +262,7 @@ Authority: District Disaster Management Authority (DDMA)`,
           body: JSON.stringify({
             chat_id: targetChat,
             text: textToSend,
-            bot_token: customBotToken.trim() || undefined,
+            bot_token: '8826544763:AAHpPT4xe_y4Jhv9cOhOJb1rgQ3Gg4UCgDM',
           }),
         });
 
