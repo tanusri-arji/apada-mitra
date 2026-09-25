@@ -106,12 +106,6 @@ export const Header: React.FC<Props> = ({
 
   return (
     <header className="h-16 px-3 lg:px-6 bg-[#0E1115]/90 backdrop-blur-xl border-b border-white/10 flex items-center justify-between gap-2 sm:gap-4 z-30 font-sans flex-shrink-0 relative">
-      {/* Tricolor Accent Line */}
-      <div className="absolute top-0 left-0 right-0 h-1 flex z-50">
-        <div className="flex-1 bg-[#FF9933]"></div>
-        <div className="flex-1 bg-white"></div>
-        <div className="flex-1 bg-[#138808]"></div>
-      </div>
 
       {/* 1. Left Page Title, Subtitle & Navigation Toggle */}
       <div className="flex items-center gap-3 min-w-0 mt-1">
