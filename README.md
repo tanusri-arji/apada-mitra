@@ -46,11 +46,13 @@ Hilly regions suffer from catastrophic flash floods driven by extreme cloudburst
 - **Real-Time Telegram Alerts**: Migrated to direct Telegram Bot API integration for zero-latency, secure alert dispatching directly from the web dashboard.
 - **Flawless Mobile Responsiveness**: Complete CSS flexbox layout engine overhaul. The entire dashboard, GIS routing map, animated SVG Risk Radar, and What-If sandbox now adapt flawlessly to all mobile screens without horizontal clipping or scroll locking.
 - **Advanced What-If Sandbox**: Interactive hydro-meteorological sliders to simulate the disaster cascade chain before making critical evacuation decisions.
+- **Command Center Sonar Radar**: A new highly-immersive, animated SVG-based tactical radar interface providing a high-level real-time overview of village risk sectors and emergency dispatch capabilities.
 
 ---
 
 ## 🚀 Core Platform Capabilities
 
+- 📡 **Command Center Sonar Radar**: Immersive, animated SVG-based tactical radar interface providing a high-level real-time overview of high-risk village sectors and rapid emergency dispatch capabilities.
 - 🏔️ **Terrain-Aware Multi-Source Risk Scoring**: Combines elevation, slope, flow accumulation log index, soil saturation, river stage, and rainfall parameters into a transparent 0–100 risk index via a deterministic weighted multi-factor risk engine.
 - 🎯 **15-Village Watershed Granularity**: Intelligence metrics for 15 villages across the high-vulnerability Alaknanda & Mandakini Himalayan watersheds.
 - 💡 **Primary Risk Drivers Breakdown**: Deterministic weighted point contribution breakdown for top risk drivers.
