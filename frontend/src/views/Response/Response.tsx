@@ -216,9 +216,21 @@ export const Response: React.FC<Props> = ({
                 </span>
               </div>
 
-              <span className="text-[10px] font-mono font-black bg-[#FF7A18]/15 text-[#FFB703] px-2.5 py-1 rounded-xl border border-[#FF7A18]/40">
-                Evac Priority {selectedPriority?.rank != null ? `#${selectedPriority.rank}` : 'N/A'}
-              </span>
+              <div className="flex flex-col items-end gap-1.5">
+                <span className="text-[10px] font-mono font-black bg-[#FF7A18]/15 text-[#FFB703] px-2.5 py-1 rounded-xl border border-[#FF7A18]/40">
+                  Evac Priority {selectedPriority?.rank != null ? `#${selectedPriority.rank}` : 'N/A'}
+                </span>
+                {selectedPriority?.relocation_priority && (
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="text-[10px] font-mono font-black bg-[#FF7A18]/15 text-[#FFB703] px-2.5 py-1 rounded-xl border border-[#FF7A18]/40">
+                      Relocation: {selectedPriority.relocation_priority}
+                    </span>
+                    <span className="text-[8px] text-gray-500 italic max-w-[140px] text-right leading-tight font-sans">
+                      * Planning indicator, not a validated relocation decision.
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">

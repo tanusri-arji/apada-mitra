@@ -195,6 +195,7 @@ class EvacuationPriority(BaseModel):
     infrastructure_contribution_pts: float
     factor_breakdown_summary: str
     primary_urgency_reason: str
+    relocation_priority: Optional[str] = None
 
 
 class RoadStatus(str, Enum):
@@ -351,6 +352,7 @@ class OperationalIncident(BaseModel):
     )
     alert_status: IncidentStatusEnum = Field(default=IncidentStatusEnum.PENDING)
     last_updated: str
+    relocation_priority: Optional[str] = None
 
 
 class IncidentActionRequest(BaseModel):

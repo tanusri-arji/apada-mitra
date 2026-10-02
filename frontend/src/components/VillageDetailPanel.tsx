@@ -562,7 +562,21 @@ export const VillageDetailPanel: React.FC<Props> = ({
                 <span className="text-earth-warning font-extrabold text-sm">{priorityDetail.evacuation_priority_score} / 100 PTS</span>
               </div>
 
-              <div className="text-[10px] text-earth-cream font-sans leading-tight bg-earth-surface p-2 rounded border border-earth-border font-mono">
+              {priorityDetail.relocation_priority && (
+                <div className="flex flex-col gap-1 mt-2">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-earth-secondary text-[10px] uppercase font-bold">RELOCATION PRIORITY:</span>
+                    <span className="text-white bg-earth-secondary/30 px-2 py-0.5 rounded font-extrabold text-xs border border-earth-border">
+                      {priorityDetail.relocation_priority}
+                    </span>
+                  </div>
+                  <span className="text-[8px] text-earth-secondary italic leading-tight">
+                    * Planning indicator based on current risk and exposure, not a validated relocation decision.
+                  </span>
+                </div>
+              )}
+
+              <div className="text-[10px] text-earth-cream font-sans leading-tight bg-earth-surface p-2 rounded border border-earth-border font-mono mt-2">
                 <strong className="block text-earth-warning uppercase text-[9px] mb-0.5">Urgency Reason:</strong>
                 {priorityDetail.primary_urgency_reason}
               </div>

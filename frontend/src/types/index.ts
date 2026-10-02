@@ -131,6 +131,7 @@ export interface EvacuationPriority {
   infrastructure_contribution_pts: number;
   factor_breakdown_summary: string;
   primary_urgency_reason: string;
+  relocation_priority?: string;
 }
 
 export type RoadStatus = 'OPEN' | 'DEGRADED' | 'BLOCKED';

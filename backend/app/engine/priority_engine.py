@@ -6,6 +6,7 @@ Calculates exact weighted contributions for Flash Flood, Landslide, Exposed Popu
 from typing import List, Dict, Any
 from app.models.domain import EvacuationPriority, RiskLevel, VillageRiskDetail, LandslideRiskDetail
 from app.engine.risk_engine import classify_risk_level
+from app.relocation import calculate_relocation_priority
 
 
 def calculate_evacuation_priorities(
@@ -66,6 +67,12 @@ def calculate_evacuation_priorities(
         top1, top2 = contrib_list[0], contrib_list[1]
         primary_reason = f"Top Drivers: {top1[0]} ({top1[2]} / +{top1[1]} pts) & {top2[0]} ({top2[2]} / +{top2[1]} pts)"
 
+        relocation_prio = calculate_relocation_priority(
+            risk_score=f_detail.flash_flood_risk_score,
+            exposed_population=pop_exp,
+            evacuation_priority_score=priority_score
+        )
+
         priorities.append(
             EvacuationPriority(
                 village_id=vid,
@@ -83,6 +90,7 @@ def calculate_evacuation_priorities(
                 infrastructure_contribution_pts=infra_pts,
                 factor_breakdown_summary=summary_str,
                 primary_urgency_reason=primary_reason,
+                relocation_priority=relocation_prio,
             )
         )
 

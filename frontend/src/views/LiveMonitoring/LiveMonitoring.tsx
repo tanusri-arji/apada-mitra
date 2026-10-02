@@ -42,6 +42,7 @@ export const LiveMonitoring: React.FC<Props> = ({
   selectedVillageDetail,
   roads,
   shelters,
+  priorities,
 }) => {
   const [stationSearch, setStationSearch] = useState('');
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
@@ -289,6 +290,8 @@ export const LiveMonitoring: React.FC<Props> = ({
                 const isSelected = v.village_id === selectedVillageId;
                 const vMeta = getStationMetadata(v.village_id);
                 const riskColor = getRiskColorHex(v.risk_level);
+                const vPriority = priorities?.find(p => p.village_id === v.village_id);
+                const relPrio = vPriority?.relocation_priority;
 
                 return (
                   <button
@@ -310,6 +313,11 @@ export const LiveMonitoring: React.FC<Props> = ({
                       <span className="text-[10px] text-gray-400 font-mono block mt-0.5">
                         {vMeta.region}
                       </span>
+                      {relPrio && (
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md mt-1 inline-block border border-gray-500/30 text-gray-400 bg-white/5">
+                          {relPrio}
+                        </span>
+                      )}
                     </div>
 
                     <div className="text-right font-mono">

@@ -512,6 +512,7 @@ def get_operational_incidents():
                     disclaimer="FINAL EVACUATION / PUBLIC WARNING DECISION REMAINS WITH AUTHORIZED DISASTER MANAGEMENT AUTHORITIES.",
                     alert_status=current_status,
                     last_updated=f.last_updated,
+                    relocation_priority=prio.relocation_priority if prio else None,
                 )
             )
 
