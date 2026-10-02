@@ -1,4 +1,8 @@
 # APADA MITRA ⚡
+
+### 🚨 **[LIVE APP DEMO: CLICK HERE TO ACCESS APADA MITRA](https://apada-mitra.vercel.app)** 🚨
+*(Vercel Global Edge Network Deployment)*
+
 > **Terrain-Aware Multi-Hazard Disaster Intelligence & Evacuation Platform**  
 > *SIH Problem Statement SIH26192: Flash Flood Prediction System for Hilly Regions using Multi-Source Data*  
 > **STATUS: APADA MITRA SIH26192 — STAGE-SAFE RELEASE VERIFIED**
@@ -35,6 +39,13 @@ The complete APADA MITRA platform is deployed live in production and ready for i
 
 ## 📌 Problem & Purpose
 Hilly regions suffer from catastrophic flash floods driven by extreme cloudbursts, high slope runoff, channel funnels, and soil saturation. Conventional weather alerts operate at coarse district levels, missing micro-watershed flood dynamics. **APADA MITRA** delivers high-resolution, village-level flash flood risk intelligence, explainable factor breakdowns, exposure tracking, multi-hazard evacuation priority ranking, hazard-aware Dijkstra routing, capacity-constrained shelter allocation, and real-time What-If scenario simulation.
+
+---
+
+## ✨ Recent Major Updates
+- **Real-Time Telegram Alerts**: Migrated to direct Telegram Bot API integration for zero-latency, secure alert dispatching directly from the web dashboard.
+- **Flawless Mobile Responsiveness**: Complete CSS flexbox layout engine overhaul. The entire dashboard, GIS routing map, animated SVG Risk Radar, and What-If sandbox now adapt flawlessly to all mobile screens without horizontal clipping or scroll locking.
+- **Advanced What-If Sandbox**: Interactive hydro-meteorological sliders to simulate the disaster cascade chain before making critical evacuation decisions.
 
 ---
 
